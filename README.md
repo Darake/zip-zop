@@ -1,6 +1,6 @@
 # Zip-Zop
 
-Zip-Zop is a compression software using lossless compression algorithms. In addition to compression, Zip-Zop can return the files to their normal form. The project is an algorithms and data structures school project.
+Zip-Zop is a compression software using lossless compression algorithms. The project is an algorithms and data structures school project.
 
 
 
