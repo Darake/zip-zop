@@ -6,7 +6,7 @@ Zip-Zop is a compression software using lossless compression algorithms. In addi
 
 ## Algorithms and data structures  
 
-The initial version will start with Huffman coding and will be expanded into using Deflate format. In addition to Huffman coding, Deflate utilizes the LZ77 algorithm. In Huffman coding at least some type of a tree structure is used. The rest of the needed data structures will be found out working on the project. The reason for choosing Deflate is easy expandability from Huffman.
+The initial version will start with Huffman coding and will be expanded into using Deflate format. In addition to Huffman coding, Deflate utilizes the LZ77 algorithm. In my implementation of Huffman's algorithm a HashMap is used for storing character occurrences and for storing each characters binary value. In addition a tree structure is used for finding out the encoded binary values, which in turn is made with a help of a priority queue. The rest of the needed data structures will be found out working on the project. The reason for choosing Deflate is easy expandability from Huffman.
 
 
 
@@ -26,4 +26,5 @@ As the input file is gone through as an uncompressed data stream, the time neede
 
 * <https://zlib.net/feldspar.html>
 * <https://en.m.wikipedia.org/wiki/LZ77_and_LZ78#LZ77>
+* <https://engineering.purdue.edu/ece264/17au/hw/HW13?alt=huffman> 
 
