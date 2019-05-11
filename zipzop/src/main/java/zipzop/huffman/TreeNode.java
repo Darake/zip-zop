@@ -41,17 +41,41 @@ public class TreeNode implements Comparable<TreeNode>{
     public Character getData() {
         return data;
     }
+    
+    public TreeNode getLeftChild() {
+        return leftChild;
+    }
+    
+    public TreeNode getRightChild() {
+        return rightChild;
+    }
+    
+    /**
+     * Checks if TreeNode has a left child node.
+     * @return Returns a true if child exists and false otherwise
+     */
+    public boolean hasLeftChild() {
+        return leftChild != null;
+    }
+    
+    /**
+     * Checks if TreeNode has a right child node.
+     * @return Returns a true if child exists and false otherwise
+     */
+    public boolean hasRightChild() {
+        return rightChild != null;
+    }
 
     @Override
     public int compareTo(TreeNode other) {
         if (this.weight < other.getWeight()) {
-            return 1;
-        } else if (this.weight > other.getWeight()) {
             return -1;
+        } else if (this.weight > other.getWeight()) {
+            return 1;
         }
         
         if (this.data != null && other.getData() == null) {
-            return 1;
+            return -1;
         } else {
             return 0;
         }

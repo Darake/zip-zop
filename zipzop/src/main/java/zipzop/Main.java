@@ -1,9 +1,8 @@
 package zipzop;
 
-import java.util.ArrayList;
-
 /**
- *
+ * Main class of the Zip-Zop application, which is a used for compressing and
+ * decompressing files.
  */
 public class Main {
 
