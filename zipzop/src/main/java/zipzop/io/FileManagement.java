@@ -1,4 +1,4 @@
-package zipzop;
+package zipzop.io;
 
 import java.io.IOException;
 import java.nio.file.Files;
