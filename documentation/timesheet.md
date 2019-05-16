@@ -13,3 +13,11 @@
 | 2019-05-11 | 5     | Huffman algorithm                                            |
 | 2019-05-11 | 1     | changing the file input to a stream, rather than reading the whole file |
 
+## Week 2
+
+| Date       | Hours | Worked on                           |
+| ---------- | ----- | ----------------------------------- |
+| 2019-05-16 | 1     | input & output                      |
+| 2019-05-16 | 1,5   | topology of the Huffman coding tree |
+| 2019-05-16 | 1     | output stream                       |
+| 2019-05-16 | 1     | compression itself                  |

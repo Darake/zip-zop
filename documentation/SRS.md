@@ -18,7 +18,7 @@ The application will take a file as an input stream, while also outputting a fil
 
 ## Time & space complexity
 
-The time needed for the algorithm should be linear to the input file size. Because of this, the target for application's time complexity is O(n). As the input file will be streamed, the file is not loaded into memory, which leads to a space complexity of O(1).
+The time needed for the algorithm should be linear to the input file size. Because of this, the target for application's time complexity is O(n). As the input file will be streamed, the file itself is not loaded into memory, so the only thing taking memory space is the character mapping and the Huffman tree.  Assuming the alphabet size to be a constant, the target space complexity is O(1).
 
 
 
