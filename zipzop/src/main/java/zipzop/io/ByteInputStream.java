@@ -21,13 +21,12 @@ public class ByteInputStream {
     }
     
     /**
-     * Reads next byte as char from file.
-     * @return byte Returns read byte.
+     * Reads next byte as int from file.
+     * @return int Returns read byte as int.
      * @throws IOException 
      */
-    public char nextChar() throws IOException {
-        System.out.println((char) 65535);
-        return (char) stream.read();
+    public int nextByte() throws IOException {
+        return stream.read();
     }
     
     /**

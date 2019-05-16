@@ -18,14 +18,14 @@ public class ByteInputStreamTest {
     }
     
     @Test
-    public void nextByteReturnsRightByte() throws IOException {
-        assertEquals('h', stream.nextChar());
-        assertEquals('e', stream.nextChar());
+    public void nextByteReturnsRightChar() throws IOException {
+        assertEquals('h', stream.nextByte());
+        assertEquals('e', stream.nextByte());
     }
     
     @Test(expected = IOException.class)
     public void closeTerminatesStream() throws IOException {
         stream.close();
-        stream.nextChar();
+        stream.nextByte();
     }
 }
