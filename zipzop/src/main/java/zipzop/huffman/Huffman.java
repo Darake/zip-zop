@@ -1,9 +1,13 @@
 package zipzop.huffman;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 import zipzop.io.ByteInputStream;
+import zipzop.io.ByteOutputStream;
 
 /**
  * Class for Huffman's algorithm
@@ -11,7 +15,7 @@ import zipzop.io.ByteInputStream;
 public class Huffman {
     
     /**
-     * Counts all char occurrences in parameters byte array by casting byte into
+     * Counts all char occurrences in parameter's byte array by casting byte into
      * char and adding it to HashMap.
      * @param byteArray
      * @return HashMap where the key is a char and the value is occurrence of
@@ -25,8 +29,22 @@ public class Huffman {
         return charOccurrences;
     }
     
-    public HashMap<Character, Integer> getCharOccurrencesFromStream(ByteInputStream stream) {
-        throw new java.lang.UnsupportedOperationException("Not supported yet.");
+    /**
+     * Counts all char occurrences from the parameter's input stream. File is
+     * read byte by byte and each byte is cast into char. Chars and their 
+     * occurrences are stored in a HashMap.
+     * @param stream A input stream of a file
+     * @return HashMap of occurrences
+     * @throws IOException 
+     */
+    public HashMap<Character, Integer> getCharOccurrencesFromStream(ByteInputStream stream) throws IOException {
+        var charOccurrences = new HashMap<Character, Integer>();
+        int data;
+        while ((data = stream.nextByte()) != -1) {
+            charOccurrences.merge((char) data, 1, (x, y) -> x + y);
+        }
+        stream.close();
+        return charOccurrences;
     }
     
     /**
@@ -82,4 +100,79 @@ public class Huffman {
         table.put(node.getData(), code);
         return;
     }
+    
+    /**
+     * Creates a topology of the Huffman coding tree for compressed file's
+     * header. Creation is done with recursion.
+     * @param node The TreeNode to be handled in the next step of recursion.
+     *             Use the tree's root when first calling the method.
+     * @param topology A byte array that the topology is filled into.
+     * @param i Index of the next empty spot in byte array.
+     * @return Updated index of the next empty spot in byte array.
+     */
+    public int createTopology(byte[] topology, int i, TreeNode node) {
+        if (node == null) {
+            return i;
+        }
+        
+        i = createTopology(topology, i, node.getLeftChild());
+        i = createTopology(topology, i, node.getRightChild());
+        
+        if (node.getData() == null) {
+            topology[i] = (byte) 0;
+            i++;
+        } else {
+            topology[i] = (byte) 1;
+            i++;
+            topology[i] = (byte) (char) node.getData();
+            i++;
+        }
+        return i;
+    }
+    
+    public void compress(String filePath) throws FileNotFoundException, IOException {
+        var occurrenceStream = new ByteInputStream(filePath);
+        HashMap<Character, Integer> occurrences = getCharOccurrencesFromStream(occurrenceStream);
+        PriorityQueue<TreeNode> treeForest = getHuffmanTreeForest(occurrences);
+        TreeNode root = getHuffmanTreeRoot(treeForest);
+        
+        var encodingTable = new HashMap<Character, String>();
+        createBitEncodingTable(encodingTable, "", root);
+        
+        int topologySize = encodingTable.size() * 3;
+        var topology = new byte[topologySize];
+        createTopology(topology, 0, root);
+        
+        var inputStream = new ByteInputStream(filePath);
+        var outputStream = new ByteOutputStream(filePath + "Compressed");
+        
+        byte[] topologySizeInBytes = ByteBuffer.allocate(4).putInt(topologySize).array();
+        outputStream.writeByteArray(topologySizeInBytes);
+        outputStream.writeByteArray(topology);
+        
+        int b;
+        String encodedBits = "";
+        while ((b = inputStream.nextByte()) != -1) {
+            String encodedValue = encodingTable.get((char) b);
+            encodedBits += encodedValue;
+            if (encodedBits.length() >= 8) {
+                byte nextByteWritten = Byte.parseByte(encodedBits.substring(0, 8), 2);
+                encodedBits = encodedBits.substring(8);
+                outputStream.writeByte(nextByteWritten);
+            }
+        }
+        if (!encodedBits.isEmpty()) {
+            int zeros = 8 - encodedBits.length();
+            String padding = "";
+            for (int i = 0; i < zeros; i++) {
+                padding += "0";
+            }
+            encodedBits = padding + encodedBits;
+            outputStream.writeByte(Byte.parseByte(encodedBits, 2));
+        }
+        
+        inputStream.close();
+        outputStream.close();
+    }
 }
+    
