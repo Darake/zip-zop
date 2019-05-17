@@ -97,7 +97,10 @@ public class Huffman {
             createBitEncodingTable(table, newCode, node.getRightChild());
         }
         
-        table.put(node.getData(), code);
+        if (node.getData() != null) {
+            table.put(node.getData(), code);
+        }
+
         return;
     }
     
@@ -130,7 +133,14 @@ public class Huffman {
         return i;
     }
     
-    public void compress(String filePath) throws FileNotFoundException, IOException {
+    /**
+     * Compresses a file using Huffman's coding.
+     * @param filePath Path to the file to be compressed as String.
+     * @param compressedFilePath Wanted to path to the compressed file as String.
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
+    public void compress(String filePath, String compressedFilePath) throws FileNotFoundException, IOException {
         var occurrenceStream = new ByteInputStream(filePath);
         HashMap<Character, Integer> occurrences = getCharOccurrencesFromStream(occurrenceStream);
         PriorityQueue<TreeNode> treeForest = getHuffmanTreeForest(occurrences);
@@ -144,10 +154,14 @@ public class Huffman {
         createTopology(topology, 0, root);
         
         var inputStream = new ByteInputStream(filePath);
-        var outputStream = new ByteOutputStream(filePath + "Compressed");
+        var outputStream = new ByteOutputStream(compressedFilePath);
         
-        byte[] topologySizeInBytes = ByteBuffer.allocate(4).putInt(topologySize).array();
-        outputStream.writeByteArray(topologySizeInBytes);
+        int charsInFile = occurrences.values().stream().mapToInt(i->i).sum();
+
+        byte[] topologySizeBytes = ByteBuffer.allocate(4).putInt(topologySize).array();
+        byte[] charsInFileBytes = ByteBuffer.allocate(4).putInt(charsInFile).array();
+        outputStream.writeByteArray(topologySizeBytes);
+        outputStream.writeByteArray(charsInFileBytes);
         outputStream.writeByteArray(topology);
         
         int b;
@@ -156,7 +170,7 @@ public class Huffman {
             String encodedValue = encodingTable.get((char) b);
             encodedBits += encodedValue;
             if (encodedBits.length() >= 8) {
-                byte nextByteWritten = Byte.parseByte(encodedBits.substring(0, 8), 2);
+                byte nextByteWritten = (byte) Integer.parseInt(encodedBits.substring(0, 8), 2);
                 encodedBits = encodedBits.substring(8);
                 outputStream.writeByte(nextByteWritten);
             }

@@ -1,18 +1,28 @@
 package zipzop.huffman;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 import zipzop.io.ByteInputStream;
 
 public class HuffmanTest {
     
     private Huffman huffman;
+    
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder();
     
     private PriorityQueue<TreeNode> getTreeForest() {
         var treeForest = new PriorityQueue<TreeNode>();
@@ -31,6 +41,20 @@ public class HuffmanTest {
         var root = new TreeNode(16, leftChild, rightChild);
         
         return root;
+    }
+    
+    private byte[] getCompressedFile() throws IOException {
+        var classloader = getClass().getClassLoader();
+        String file = classloader.getResource("compressionFile").getPath();  
+        
+        File tempFolder = testFolder.newFolder("folder");
+        String compressedFile = tempFolder.getAbsolutePath() + "comrpressed";
+        Path compressedPath = Paths.get(compressedFile);
+        
+        huffman.compress(file, compressedFile);
+        
+        var byteArray = Files.readAllBytes(compressedPath);
+        return byteArray;
     }
     
     @Before
@@ -109,6 +133,7 @@ public class HuffmanTest {
         assertEquals("0", encodingTable.get('k'));
         assertEquals("10", encodingTable.get('l'));
         assertEquals("11", encodingTable.get('h'));
+        assertEquals(3, encodingTable.size());
     }
     
     @Test
@@ -126,5 +151,48 @@ public class HuffmanTest {
         assertEquals((byte) 0, topology[6]);
         assertEquals((byte) 0, topology[7]);
         assertEquals((byte) 0, topology[8]);
+    }
+    
+    @Test
+    public void compressedFileTopologySizeCorrectInHeader() throws IOException {
+        byte[] compressedFile = getCompressedFile();
+        
+        assertEquals(0, compressedFile[0]);
+        assertEquals(0, compressedFile[1]);
+        assertEquals(0, compressedFile[2]);
+        assertEquals(9, compressedFile[3]);
+    }
+    
+    @Test
+    public void compressedFileUncompressedCharacterAmountCorrectInHeader() throws IOException {
+        byte[] compressedFile = getCompressedFile();
+        
+        assertEquals(0, compressedFile[4]);
+        assertEquals(0, compressedFile[5]);
+        assertEquals(0, compressedFile[6]);
+        assertEquals(7, compressedFile[7]);
+    }
+    
+    @Test
+    public void compressedFileTopologyCorrect() throws IOException {
+        byte[] compressedFile = getCompressedFile();
+        
+        assertEquals(1, compressedFile[8]);
+        assertEquals(111, compressedFile[9]);
+        assertEquals(1, compressedFile[10]);
+        assertEquals(98, compressedFile[11]);
+        assertEquals(1, compressedFile[12]);
+        assertEquals(99, compressedFile[13]);
+        assertEquals(0, compressedFile[14]);
+        assertEquals(0, compressedFile[15]);
+        assertEquals(0, compressedFile[16]);
+    }
+    
+    @Test
+    public void compressedFileDataCorrect() throws IOException {
+        byte[] compressedFile = getCompressedFile();
+        
+        assertEquals(-46, compressedFile[17]);
+        assertEquals(0, compressedFile[18]);
     }
 }
