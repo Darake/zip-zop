@@ -21,4 +21,4 @@
 | 2019-05-16 | 1,5   | topology of the Huffman coding tree |
 | 2019-05-16 | 1     | output stream                       |
 | 2019-05-16 | 1     | compression process                 |
-| 2019-05-17 | 1     | compression process                 |
+| 2019-05-17 | 1,5     | compression process                 |
