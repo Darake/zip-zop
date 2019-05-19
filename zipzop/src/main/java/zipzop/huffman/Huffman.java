@@ -134,6 +134,39 @@ public class Huffman {
     }
     
     /**
+     * Encodes the file's data one byte at a time using the encoding table.
+     * @param encodingTable HashMap<Character, String> encoding table for encoding
+     *                      the data.
+     * @param inputStream   ByteInputStream for the file to be encoded.
+     * @param outputStream  ByteOutputStream for the target output file.
+     * @throws IOException 
+     */
+    public void encodeData(HashMap<Character, String> encodingTable,
+            ByteInputStream inputStream, ByteOutputStream outputStream) throws IOException {
+        
+        int b;
+        String encodedBits = "";
+        while ((b = inputStream.nextByte()) != -1) {
+            String encodedValue = encodingTable.get((char) b);
+            encodedBits += encodedValue;
+            if (encodedBits.length() >= 8) {
+                byte nextByteWritten = (byte) Integer.parseInt(encodedBits.substring(0, 8), 2);
+                encodedBits = encodedBits.substring(8);
+                outputStream.writeByte(nextByteWritten);
+            }
+        }
+        if (!encodedBits.isEmpty()) {
+            int zeros = 8 - encodedBits.length();
+            String padding = "";
+            for (int i = 0; i < zeros; i++) {
+                padding += "0";
+            }
+            encodedBits = padding + encodedBits;
+            outputStream.writeByte(Byte.parseByte(encodedBits, 2));
+        }
+    }
+    
+    /**
      * Compresses a file using Huffman's coding.
      * @param filePath Path to the file to be compressed as String.
      * @param compressedFilePath Wanted to path to the compressed file as String.
@@ -164,26 +197,7 @@ public class Huffman {
         outputStream.writeByteArray(charsInFileBytes);
         outputStream.writeByteArray(topology);
         
-        int b;
-        String encodedBits = "";
-        while ((b = inputStream.nextByte()) != -1) {
-            String encodedValue = encodingTable.get((char) b);
-            encodedBits += encodedValue;
-            if (encodedBits.length() >= 8) {
-                byte nextByteWritten = (byte) Integer.parseInt(encodedBits.substring(0, 8), 2);
-                encodedBits = encodedBits.substring(8);
-                outputStream.writeByte(nextByteWritten);
-            }
-        }
-        if (!encodedBits.isEmpty()) {
-            int zeros = 8 - encodedBits.length();
-            String padding = "";
-            for (int i = 0; i < zeros; i++) {
-                padding += "0";
-            }
-            encodedBits = padding + encodedBits;
-            outputStream.writeByte(Byte.parseByte(encodedBits, 2));
-        }
+        encodeData(encodingTable, inputStream, outputStream);
         
         inputStream.close();
         outputStream.close();

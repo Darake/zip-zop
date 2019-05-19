@@ -1,7 +1,6 @@
 package zipzop.huffman;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,13 +15,21 @@ import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import zipzop.io.ByteInputStream;
+import zipzop.io.ByteOutputStream;
 
 public class HuffmanTest {
     
     private Huffman huffman;
+    private String file;
+    private String compressedFile;
     
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
+    
+    @Before
+    public void setUp() {
+        huffman = new Huffman();
+    }
     
     private PriorityQueue<TreeNode> getTreeForest() {
         var treeForest = new PriorityQueue<TreeNode>();
@@ -43,12 +50,16 @@ public class HuffmanTest {
         return root;
     }
     
-    private byte[] getCompressedFile() throws IOException {
+    private void setUpFilePaths() throws IOException {
         var classloader = getClass().getClassLoader();
-        String file = classloader.getResource("compressionFile").getPath();  
+        file = classloader.getResource("compressionFile").getPath();  
         
         File tempFolder = testFolder.newFolder("folder");
-        String compressedFile = tempFolder.getAbsolutePath() + "comrpressed";
+        compressedFile = tempFolder.getAbsolutePath() + "comrpressed";
+    }
+    
+    private byte[] getCompressedFile() throws IOException {
+        setUpFilePaths();
         Path compressedPath = Paths.get(compressedFile);
         
         huffman.compress(file, compressedFile);
@@ -57,11 +68,6 @@ public class HuffmanTest {
         return byteArray;
     }
     
-    @Before
-    public void setUp() {
-        huffman = new Huffman();
-    }
-
     @Test
     public void getCharOccurrencesInByteArrayWorks() {
         var byteArray = "hello".getBytes();
@@ -151,6 +157,25 @@ public class HuffmanTest {
         assertEquals((byte) 0, topology[6]);
         assertEquals((byte) 0, topology[7]);
         assertEquals((byte) 0, topology[8]);
+    }
+    
+    @Test
+    public void encodeDataWorks() throws IOException {
+        setUpFilePaths();
+        var inputStream = new ByteInputStream(file);
+        var outputStream = new ByteOutputStream(compressedFile);
+        var encodingTable = new HashMap<Character, String>();
+        encodingTable.put('o', "0");
+        encodingTable.put('b', "10");
+        encodingTable.put('c', "11");
+        
+        huffman.encodeData(encodingTable, inputStream, outputStream);
+        
+        Path compressedPath = Paths.get(compressedFile);
+        var byteArray = Files.readAllBytes(compressedPath);
+        
+        assertEquals(-46, byteArray[0]);
+        assertEquals(0, byteArray[1]);
     }
     
     @Test
