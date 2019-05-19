@@ -22,3 +22,11 @@
 | 2019-05-16 | 1     | output stream                       |
 | 2019-05-16 | 1     | compression process                 |
 | 2019-05-17 | 1,5     | compression process                 |
+
+## Week 3
+
+| Date       | Hours | Worked on                                         |
+| ---------- | ----- | ------------------------------------------------- |
+| 2019-05-19 | 1     | refactoring and researching Huffman decompression |
+| 2019-05-19 | 1     | building Huffman's tree for decompression         |
+
