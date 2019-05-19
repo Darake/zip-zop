@@ -220,4 +220,20 @@ public class HuffmanTest {
         assertEquals(-46, compressedFile[17]);
         assertEquals(0, compressedFile[18]);
     }
+    
+    @Test
+    public void buildTreeWorks() throws FileNotFoundException, IOException {
+        String path = getClass()
+                .getClassLoader()
+                .getResource("treeBuildingTestFile")
+                .getPath();
+        var stream = new ByteInputStream(path);
+        TreeNode root = huffman.buildTree(stream);
+        
+        assertEquals('o', (char) root.getLeftChild().getData());
+        assertEquals('b', (char) root.getRightChild().getLeftChild().getData());
+        assertEquals('c', (char) root.getRightChild().getRightChild().getData());
+        
+        stream.close();
+    }
 }

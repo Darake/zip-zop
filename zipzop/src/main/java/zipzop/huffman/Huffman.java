@@ -3,6 +3,7 @@ package zipzop.huffman;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -201,6 +202,30 @@ public class Huffman {
         
         inputStream.close();
         outputStream.close();
+    }
+    
+    /**
+     * Builds a Huffman's tree for file's decompression.
+     * @param stream The ByteInputStream of the file being decompressed. The
+     *               stream must be at the start of tree's topology.
+     * @return Returns the tree's root node.
+     * @throws IOException 
+     */
+    public TreeNode buildTree(ByteInputStream stream) throws IOException {
+        var stack = new ArrayDeque<TreeNode>();
+        int b;
+        while (true) {
+            if ((b = stream.nextByte()) == 0) {
+                if (stack.size() == 1) break;
+                var rightChild = stack.pollLast();
+                var leftChild = stack.pollLast();
+                stack.add(new TreeNode(leftChild, rightChild));
+            } else {
+                b = stream.nextByte();
+                stack.add(new TreeNode((char) b));
+            }
+        }
+        return stack.poll();
     }
 }
     

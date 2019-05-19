@@ -34,6 +34,24 @@ public class TreeNode implements Comparable<TreeNode>{
         this.rightChild = rightChild;
     }
     
+    /**
+     * Constructor for leaves when building tree for decompression.
+     * @param data The character itself
+     */
+    public TreeNode(Character data) {
+        this.data = data;
+    }
+    
+    /**
+     * Constructor for non-leaves when building tree for decompression.
+     * @param leftChild
+     * @param rightChild 
+     */
+    public TreeNode(TreeNode leftChild, TreeNode rightChild) {
+        this.leftChild = leftChild;
+        this.rightChild = rightChild;
+    }
+    
     public int getWeight() {
         return weight;
     }
