@@ -1,6 +1,5 @@
 package zipzop.huffman;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,88 +9,61 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import zipzop.io.ByteInputStream;
 import zipzop.io.ByteOutputStream;
 
+@DisplayName("Huffman tests")
 public class HuffmanTest {
     
     private Huffman huffman;
-    private String file;
-    private String compressedFile;
     
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
-    
-    @Before
+    @BeforeEach
     public void setUp() {
         huffman = new Huffman();
     }
     
-    private PriorityQueue<TreeNode> getTreeForest() {
-        var treeForest = new PriorityQueue<TreeNode>();
-        treeForest.add(new TreeNode(2, 'h'));
-        treeForest.add(new TreeNode(5, 'l'));
-        treeForest.add(new TreeNode(1, 's'));
-        treeForest.add(new TreeNode(9, 'k'));
-        return treeForest;
-    }
-    
-    private TreeNode getTreeRoot() {
-        var leftGrandChild = new TreeNode(5, 'l');
-        var rightGrandChild = new TreeNode(2, 'h');
-        var leftChild = new TreeNode(9, 'k');
-        var rightChild = new TreeNode(7, leftGrandChild, rightGrandChild);
-        var root = new TreeNode(16, leftChild, rightChild);
+    @Nested
+    @DisplayName("Tests for occurrences")
+    class OccurrenceTests {
         
-        return root;
-    }
-    
-    private void setUpFilePaths() throws IOException {
-        var classloader = getClass().getClassLoader();
-        file = classloader.getResource("compressionFile").getPath();  
+        private Map<Character, Integer> expected;
         
-        File tempFolder = testFolder.newFolder("folder");
-        compressedFile = tempFolder.getAbsolutePath() + "comrpressed";
-    }
-    
-    private byte[] getCompressedFile() throws IOException {
-        setUpFilePaths();
-        Path compressedPath = Paths.get(compressedFile);
+        @BeforeEach
+        public void setUp() {
+            expected = Map.of('l', 2, 'h', 1, 'e', 1, 'o', 1);
+        }
         
-        huffman.compress(file, compressedFile);
+        @Test
+        @DisplayName("getCharOccurrencesInByteArray returns a map with correct values")
+        public void getCharOccurrencesInByteArrayReturnsExpectedMap() {
+            var byteArray = "hello".getBytes();
+            Map<Character, Integer> occurrences = huffman.getCharOccurrencesInByteArray(byteArray);
         
-        var byteArray = Files.readAllBytes(compressedPath);
-        return byteArray;
+            assertEquals(expected, occurrences);
+        }
+        
+        @Test
+        @DisplayName("getCharOccurrencesFromStream returns a map with correct values")
+        public void getCharOccurrencesFromStreamReturnsExpectedMap() throws FileNotFoundException, IOException {
+            String path = getClass()
+                    .getClassLoader()
+                    .getResource("testfile")
+                    .getPath();
+            var stream = new ByteInputStream(path);
+            Map<Character, Integer> occurrences = huffman.getCharOccurrencesFromStream(stream);
+        
+            assertEquals(expected, occurrences);
+        }
     }
     
     @Test
-    public void getCharOccurrencesInByteArrayReturnsExpectedMap() {
-        var byteArray = "hello".getBytes();
-        Map<Character, Integer> occurrences = huffman.getCharOccurrencesInByteArray(byteArray);
-        Map<Character, Integer> expected = Map.of('l', 2, 'h', 1, 'e', 1, 'o', 1);
-        
-        assertEquals(expected, occurrences);
-    }
-    
-    @Test
-    public void getCharOccurrencesFromStreamReturnsExpectedMap() throws FileNotFoundException, IOException {
-        String path = getClass()
-                .getClassLoader()
-                .getResource("testfile")
-                .getPath();
-        var stream = new ByteInputStream(path);
-        Map<Character, Integer> occurrences = huffman.getCharOccurrencesFromStream(stream);
-        Map<Character, Integer> expected = Map.of('l', 2, 'h', 1, 'e', 1, 'o', 1);
-        
-        assertEquals(expected, occurrences);
-    }
-    
-    @Test
+    @DisplayName("getHuffManTreeForest returns a queue with nodes in right order")
     public void getHuffManTreeForestReturnsExpectedQueue() {
         Map<Character, Integer> occurrences = Map.of('h', 5, 'e', 2, 'l', 1, 'o', 3);
         PriorityQueue<TreeNode> treeForest = huffman.getHuffmanTreeForest(occurrences);
@@ -104,101 +76,138 @@ public class HuffmanTest {
     }
     
     @Test
-    public void getHuffmanTreeRootTreeHasRightWeights() {
-        TreeNode treeRoot = huffman.getHuffmanTreeRoot(getTreeForest());
+    @DisplayName("getHuffmanTreeRoot creates a tree with leaves in the right positions")
+    public void getHuffmanTreeRootLeavesInCorrectPositions() {
+        var treeForest = new PriorityQueue<TreeNode>();
+        treeForest.add(new TreeNode(2, 'h'));
+        treeForest.add(new TreeNode(5, 'l'));
+        treeForest.add(new TreeNode(1, 's'));
+        treeForest.add(new TreeNode(9, 'k'));
+        TreeNode treeRoot = huffman.getHuffmanTreeRoot(treeForest);
+        String result = "" + treeRoot.getLeftChild().getData()
+                + treeRoot.getRightChild().getLeftChild().getData()
+                + treeRoot.getRightChild().getRightChild().getLeftChild().getData()
+                + treeRoot.getRightChild().getRightChild().getRightChild().getData();
         
-        assertEquals(17, treeRoot.getWeight());
-        assertEquals(9, treeRoot.getLeftChild().getWeight());
-        var rightChild = treeRoot.getRightChild();
-        assertEquals(8, rightChild.getWeight());
-        assertEquals(5, rightChild.getLeftChild().getWeight());
-        var rightGrandChild = rightChild.getRightChild();
-        assertEquals(3, rightGrandChild.getWeight());
-        assertEquals(2, rightGrandChild.getLeftChild().getWeight());
-        assertEquals(1, rightGrandChild.getRightChild().getWeight());
+        assertEquals("klhs", result);
+    }
+    
+    @Nested
+    @DisplayName("Tests where Huffman's tree is needed")
+    class HuffmanTreeNeeded {
+        
+        private TreeNode root;
+        
+        @BeforeEach
+        public void setUp() {
+            var leftGrandChild = new TreeNode(5, 'l');
+            var rightGrandChild = new TreeNode(2, 'h');
+            var leftChild = new TreeNode(9, 'k');
+            var rightChild = new TreeNode(7, leftGrandChild, rightGrandChild);
+            root = new TreeNode(16, leftChild, rightChild);
+        }
+        
+        @Test
+        @DisplayName("createBitEncodingTable inserts correct values to the map")
+        public void createBitEncodingTableReturnsTableWithRightCodes() {
+            String code = "";
+            var encodingTable = new HashMap<Character, String>();
+            huffman.createBitEncodingTable(encodingTable, code, root);
+            Map<Character, String> expected = Map.of('k', "0", 'l', "10", 'h', "11");
+        
+            assertEquals(expected, encodingTable);
+        }
+        
+        @Test
+        @DisplayName("createTopology inserts correct bytes into byte array")
+        public void createTopologyCreatesExpectedByteArray() {
+            byte[] topology = new byte[9];
+            huffman.createTopology(topology, 0, root);
+            byte[] expected =  {1, 'k', 1, 'l', 1, 'h', 0, 0, 0};
+        
+            assertArrayEquals(expected, topology);
+        }
+    }
+    
+    @Nested
+    @DisplayName("Huffman compression tests with reading and writing")
+    class ReadWriteTests {
+        
+        private String input;
+        private String output;
+        
+        @BeforeEach
+        public void setUp(@TempDir Path tempDir) {
+            input = getClass().getClassLoader().getResource("compressionFile").getPath();
+            output = tempDir.resolve("output").toString();
+        }
+        
+        @Test
+        @DisplayName("encodeData writes correct bytes into output file")
+        public void encodeDataWritesExpectedBytes(@TempDir Path tempDir) throws IOException {;  
+            var inputStream = new ByteInputStream(input);
+            var outputStream = new ByteOutputStream(output);
+            var encodingTable = Map.of('o', "0", 'b', "10", 'c', "11");
+            huffman.encodeData(encodingTable, inputStream, outputStream);
+            var byteArray = Files.readAllBytes(Paths.get(output));
+            byte[] expected = {-46, 0};
+        
+            assertArrayEquals(expected, byteArray);
+        }
+        
+        @Nested
+        @DisplayName("compress")
+        class CompressTests {
+            
+            private byte[] compressedFile;
+            
+            @BeforeEach
+            public void setUp() throws IOException {
+                Path outputPath = Paths.get(output);
+                huffman.compress(input, output);
+                compressedFile = Files.readAllBytes(outputPath);
+            }
+            
+            @Test
+            @DisplayName("creates a file where the 4 byte integer for topology size is correct")
+            public void compressedFileTopologySizeCorrectInHeader() throws IOException {
+                byte[] topologySize = Arrays.copyOfRange(compressedFile, 0, 4);
+                byte[] expected = {0, 0, 0, 9};
+        
+                assertArrayEquals(expected, topologySize);
+            }
+            
+            @Test
+            @DisplayName("creates a file where the 4 byte integer for uncompressed file size is correct")
+             public void compressedFileUncompressedByteSizeCorrectInHeader() throws IOException {
+                byte[] byteSize = Arrays.copyOfRange(compressedFile, 4, 8);
+                byte[] expected = {0, 0, 0, 7};
+        
+                assertArrayEquals(expected, byteSize);
+            }
+    
+            @Test
+            @DisplayName("creates a file where the topology is correct")
+            public void compressedFileTopologyCorrect() throws IOException {
+                byte[] topology = Arrays.copyOfRange(compressedFile, 8, 17);
+                byte[] expected = {1, 111, 1, 98, 1, 99, 0, 0, 0};
+        
+                assertArrayEquals(expected, topology);
+            }
+    
+            @Test
+            @DisplayName("creates a file where the encoded data is correct")
+            public void compressedFileDataCorrect() throws IOException {
+                byte[] encodedData = Arrays.copyOfRange(compressedFile, 17, 19);
+                byte[] expected = {-46, 0};
+        
+                assertArrayEquals(expected, encodedData);
+            }
+        }
     }
     
     @Test
-    public void getHuffmanTreeRootTreeHasLeavesInRightPlaces() {
-        TreeNode treeRoot = huffman.getHuffmanTreeRoot(getTreeForest());
-        
-        assertEquals('k', (char) treeRoot.getLeftChild().getData());
-        assertEquals('l', (char) treeRoot.getRightChild().getLeftChild().getData());
-        assertEquals('h', (char) treeRoot.getRightChild().getRightChild().getLeftChild().getData());
-        assertEquals('s', (char) treeRoot.getRightChild().getRightChild().getRightChild().getData());        
-    }
-    
-    @Test
-    public void createBitEncodingTableReturnsTableWithRightCodes() {
-        TreeNode root = getTreeRoot();
-        var encodingTable = new HashMap<Character, String>();
-        String code = "";
-        
-        huffman.createBitEncodingTable(encodingTable, code, root);
-        Map<Character, String> expected = Map.of('k', "0", 'l', "10", 'h', "11");
-        
-        assertEquals(expected, encodingTable);
-    }
-    
-    @Test
-    public void createTopologyCreatesExpectedByteArray() {
-        TreeNode root = getTreeRoot();
-        byte[] topology = new byte[9];
-        huffman.createTopology(topology, 0, root);
-        byte[] expected =  {1, 'k', 1, 'l', 1, 'h', 0, 0, 0};
-        
-        assertArrayEquals(expected, topology);
-    }
-    
-    @Test
-    public void encodeDataWritesExpectedBytes() throws IOException {
-        setUpFilePaths();
-        var inputStream = new ByteInputStream(file);
-        var outputStream = new ByteOutputStream(compressedFile);
-        var encodingTable = Map.of('o', "0", 'b', "10", 'c', "11");
-        
-        huffman.encodeData(encodingTable, inputStream, outputStream);
-        
-        Path compressedPath = Paths.get(compressedFile);
-        var byteArray = Files.readAllBytes(compressedPath);
-        byte[] expected = {-46, 0};
-        
-        assertArrayEquals(expected, byteArray);
-    }
-    
-    @Test
-    public void compressedFileTopologySizeCorrectInHeader() throws IOException {
-        byte[] topologySize = Arrays.copyOfRange(getCompressedFile(), 0, 4);
-        byte[] expected = {0, 0, 0, 9};
-        
-        assertArrayEquals(expected, topologySize);
-    }
-    
-    @Test
-    public void compressedFileUncompressedByteSizeCorrectInHeader() throws IOException {
-        byte[] byteSize = Arrays.copyOfRange(getCompressedFile(), 4, 8);
-        byte[] expected = {0, 0, 0, 7};
-        
-        assertArrayEquals(expected, byteSize);
-    }
-    
-    @Test
-    public void compressedFileTopologyCorrect() throws IOException {
-        byte[] topology = Arrays.copyOfRange(getCompressedFile(), 8, 17);
-        byte[] expected = {1, 111, 1, 98, 1, 99, 0, 0, 0};
-        
-        assertArrayEquals(expected, topology);
-    }
-    
-    @Test
-    public void compressedFileDataCorrect() throws IOException {
-        byte[] compressedFile = Arrays.copyOfRange(getCompressedFile(), 17, 19);
-        byte[] expected = {-46, 0};
-        
-        assertArrayEquals(expected, compressedFile);
-    }
-    
-    @Test
+    @DisplayName("buildTree builds a tree with leaves in right positions")
     public void buildTreeWorks() throws FileNotFoundException, IOException {
         String path = getClass()
                 .getClassLoader()
@@ -206,10 +215,11 @@ public class HuffmanTest {
                 .getPath();
         var stream = new ByteInputStream(path);
         TreeNode root = huffman.buildTree(stream);
+        String result = "" + root.getLeftChild().getData()
+                + root.getRightChild().getLeftChild().getData()
+                + root.getRightChild().getRightChild().getData();
         
-        assertEquals('o', (char) root.getLeftChild().getData());
-        assertEquals('b', (char) root.getRightChild().getLeftChild().getData());
-        assertEquals('c', (char) root.getRightChild().getRightChild().getData());
+        assertEquals("obc", result);
         
         stream.close();
     }

@@ -1,43 +1,54 @@
 package zipzop.huffman;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
+@DisplayName("TreeNode tests")
 public class TreeNodeTest {
+    
+    private TreeNode node;
+    
+    @BeforeEach
+    public void setUp() {
+        node = new TreeNode(1, 'a');
+    }
 
     @Test
+    @DisplayName("compareTo returns a negative value when weight is smaller")
     public void compareToReturnsNegativeWhenWeightSmaller() {
-        var node = new TreeNode(1, 'a');
         var other = new TreeNode(2, 'b');
         
         assertEquals(-1, node.compareTo(other));
     }
     
     @Test
+    @DisplayName("compareTo returns a positive value when weight is bigger")
     public void compareToReturnsPositiveWhenWeightBigger() {
-        var node = new TreeNode(2, 'a');
-        var other = new TreeNode(1, 'b');
+        var other = new TreeNode(0, 'b');
         
         assertEquals(1, node.compareTo(other));
     }
     
     @Test
+    @DisplayName("compareTo returns a negative value when weight is equal and node contains data")
     public void compareToReturnsNegativeWhenWeightsEqualAndFirstNodeContainsData() {
-        var node = new TreeNode(1, 'a');
         var other = new TreeNode(1, null, null);
         
         assertEquals(-1, node.compareTo(other));
     }
     
     @Test
+    @DisplayName("compareTo returns zero when weight is equal and both contain data")
     public void compareToReturnsZeroWhenWeightsEqualAndBothContainData() {
-        var node = new TreeNode(1, 'a');
         var other = new TreeNode(1, 'b');
         
         assertEquals(0, node.compareTo(other));
     }
     
     @Test
+    @DisplayName("compareTo returns zero when weight is equal and neither contain data")
     public void compareToReturnsZeroWhenWeightsEqualAndBothDataNull() {
         var node = new TreeNode(1, null, null);
         var other = new TreeNode(1, null, null);
@@ -46,34 +57,34 @@ public class TreeNodeTest {
     }
     
     @Test
+    @DisplayName("hasLeftChild returns true when one exists")
     public void hasLeftChildReturnsTrueWhenOneExists() {
-        var child = new TreeNode(1, 'a');
-        var node = new TreeNode(1, child, null);
+        var parent = new TreeNode(1, node, null);
         
-        assertEquals(true, node.hasLeftChild());
+        assertEquals(true, parent.hasLeftChild());
     }
     
     @Test
+    @DisplayName("hasLeftChild returns false when one doesn't exist")
     public void hasLeftChildReturnsFalseWhenOneDoesntExist() {
-        var child = new TreeNode(1, 'a');
-        var node = new TreeNode(1, null, null);
+        var parent = new TreeNode(1, null, null);
         
-        assertEquals(false, node.hasLeftChild());
+        assertEquals(false, parent.hasLeftChild());
     }
     
     @Test
+    @DisplayName("hasRightChild returns true when one exists")
     public void hasRightChildReturnsTrueWhenOneExists() {
-        var child = new TreeNode(1, 'a');
-        var node = new TreeNode(1, null, child);
+        var parent = new TreeNode(1, null, node);
         
-        assertEquals(true, node.hasRightChild());
+        assertEquals(true, parent.hasRightChild());
     }
     
     @Test
+    @DisplayName("hasRightChild returns false when one doesn't exist")
     public void hasRightChildReturnsFalseWhenOneDoesntExist() {
-        var child = new TreeNode(1, 'a');
-        var node = new TreeNode(1, null, null);
+        var parent = new TreeNode(1, null, null);
         
-        assertEquals(false, node.hasRightChild());
+        assertEquals(false, parent.hasRightChild());
     }
 }

@@ -2,30 +2,36 @@ package zipzop.io;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
+@DisplayName("ByteInputStream tests")
 public class ByteInputStreamTest {
     
     private ByteInputStream stream;
     
-    @Before
+    @BeforeEach
     public void setUp() throws FileNotFoundException {
-        var classloader = getClass().getClassLoader();
-        var path = classloader.getResource("testfile").getPath();
+        String path = getClass().getClassLoader().getResource("testfile").getPath();
         stream = new ByteInputStream(path);
     }
     
     @Test
-    public void nextByteReturnsRightChar() throws IOException {
-        assertEquals('h', stream.nextByte());
-        assertEquals('e', stream.nextByte());
+    @DisplayName("nextByte returns right byte")
+    public void nextByteReturnsRightByte() throws IOException {
+        String result = "" + (char) stream.nextByte() + (char) stream.nextByte();
+        
+        assertEquals("he", result);
     }
     
-    @Test(expected = IOException.class)
+    @Test
+    @DisplayName("close termintates stream")
     public void closeTerminatesStream() throws IOException {
         stream.close();
-        stream.nextByte();
+        assertThrows(IOException.class, () -> {
+            stream.nextByte();
+        });
     }
 }

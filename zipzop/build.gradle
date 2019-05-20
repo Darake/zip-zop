@@ -8,10 +8,18 @@ mainClassName = 'zipzop.Main'
 
 repositories {
     jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
+    testImplementation(
+            'junit:junit:4.12',
+            'org.junit.jupiter:junit-jupiter-api:5.4.2'
+    )
+    testRuntime(
+            'org.junit.jupiter:junit-jupiter-engine:5.4.2',
+            'org.junit.vintage:junit-vintage-engine:5.4.2'
+    )
 }
 
 jacocoTestReport {
@@ -26,6 +34,7 @@ jacoco {
 }
 
 test {
+  useJUnitPlatform()
   testLogging.showStandardStreams = true
 }
 

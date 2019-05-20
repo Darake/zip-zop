@@ -2,27 +2,22 @@ package zipzop.io;
 
 import zipzop.io.FileManagement;
 import java.io.IOException;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+import java.util.Arrays;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
+@DisplayName("FileManagement tests")
 public class FileManagementTest { 
-      
-    @Before
-    public void setUp() {
-    }
     
     @Test
+    @DisplayName("readFileToByteArray reads the expected bytes to array")
     public void readFileToByteArrayWorks() throws IOException {
         var fileManagement = new FileManagement();
-        var classloader = getClass().getClassLoader();
-        var path = classloader.getResource("testfile").getPath();
+        String path = getClass().getClassLoader().getResource("testfile").getPath();
         var byteArray = fileManagement.readFileToByteArray(path);
-        var content = "";
-        for (byte b : byteArray) {
-            content += (char) b;
-        }
-        assertEquals(true, content.contains("hello"));
+        
+        assertEquals("hello", new String(byteArray));
     }
     
 }

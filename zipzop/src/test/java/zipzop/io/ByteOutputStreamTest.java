@@ -1,45 +1,45 @@
 package zipzop.io;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import java.nio.file.Path;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+@DisplayName("ByteOutputStream tests")
 public class ByteOutputStreamTest {
 
     private ByteOutputStream stream;
-    private File tempFolder;
+    private String file;
     
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
-    
-    @Before
-    public void setUp() throws IOException {
-        tempFolder = testFolder.newFolder("folder");
-        stream = new ByteOutputStream(tempFolder.getAbsolutePath() + "/testoutput");
+    @BeforeEach
+    public void setUp(@TempDir Path tempDir) throws IOException {
+        file = tempDir.resolve("output").toString();
+        stream = new ByteOutputStream(file);
     }
     
     @Test
+    @DisplayName("writeByte writes a correct byte to file")
     public void writeByteWorks() throws IOException {
-        stream.writeByte((byte) 'k');
-        var inputStream = new FileInputStream(tempFolder.getAbsolutePath() + "/testoutput");
+        stream.writeByte('k');
+        var inputStream = new FileInputStream(file);
         
-        assertEquals('k', (char) inputStream.read());
+        assertEquals('k', inputStream.read());
         
         inputStream.close();
     }
     
     @Test
+    @DisplayName("writeByteArray writes correct bytes to file")
     public void writeByteArrayWorks() throws IOException {
         byte[] bArray = "hello".getBytes();
         
         stream.writeByteArray(bArray);
         
-        var inputStream = new FileInputStream(tempFolder.getAbsolutePath() + "/testoutput");
+        var inputStream = new FileInputStream(file);
         var string = new String(inputStream.readAllBytes());
         
         assertEquals("hello", string);
@@ -47,9 +47,12 @@ public class ByteOutputStreamTest {
         inputStream.close();
     }
     
-    @Test(expected = IOException.class)
+    @Test
+    @DisplayName("close terminates stream")
     public void closeTerminatesStream() throws IOException {
         stream.close();
-        stream.writeByte(0);
+        assertThrows(IOException.class, () -> {
+            stream.writeByte(0);
+        });
     }
 }
