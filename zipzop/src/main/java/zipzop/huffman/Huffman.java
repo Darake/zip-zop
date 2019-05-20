@@ -54,7 +54,7 @@ public class Huffman {
      * @param occurrences A HashMap of character occurrences.
      * @return PriorityQueue of TreeNodes
      */
-    public PriorityQueue<TreeNode> getHuffmanTreeForest(HashMap<Character, Integer> occurrences) {
+    public PriorityQueue<TreeNode> getHuffmanTreeForest(Map<Character, Integer> occurrences) {
         var treeForest = new PriorityQueue<TreeNode>();
         for (Map.Entry<Character, Integer> occurrence : occurrences.entrySet()) {
             var node = new TreeNode(occurrence.getValue(), occurrence.getKey());
@@ -136,13 +136,13 @@ public class Huffman {
     
     /**
      * Encodes the file's data one byte at a time using the encoding table.
-     * @param encodingTable HashMap<Character, String> encoding table for encoding
+     * @param encodingTable Map<Character, String> encoding table for encoding
      *                      the data.
      * @param inputStream   ByteInputStream for the file to be encoded.
      * @param outputStream  ByteOutputStream for the target output file.
      * @throws IOException 
      */
-    public void encodeData(HashMap<Character, String> encodingTable,
+    public void encodeData(Map<Character, String> encodingTable,
             ByteInputStream inputStream, ByteOutputStream outputStream) throws IOException {
         
         int b;

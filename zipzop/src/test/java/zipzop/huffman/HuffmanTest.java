@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -69,38 +70,37 @@ public class HuffmanTest {
     }
     
     @Test
-    public void getCharOccurrencesInByteArrayWorks() {
+    public void getCharOccurrencesInByteArrayReturnsExpectedMap() {
         var byteArray = "hello".getBytes();
-        var occurrences = huffman.getCharOccurrencesInByteArray(byteArray);
+        Map<Character, Integer> occurrences = huffman.getCharOccurrencesInByteArray(byteArray);
+        Map<Character, Integer> expected = Map.of('l', 2, 'h', 1, 'e', 1, 'o', 1);
         
-        assertEquals((Integer) 2, occurrences.get('l'));
-        assertEquals((Integer) 1, occurrences.get('h'));
-        assertEquals((Integer) 1, occurrences.get('e'));
-        assertEquals((Integer) 1, occurrences.get('o'));
+        assertEquals(expected, occurrences);
     }
     
     @Test
-    public void getCharOccurrencesFromStreamWorks() throws FileNotFoundException, IOException {
-        var classloader = getClass().getClassLoader();
-        String path = classloader.getResource("testfile").getPath();
+    public void getCharOccurrencesFromStreamReturnsExpectedMap() throws FileNotFoundException, IOException {
+        String path = getClass()
+                .getClassLoader()
+                .getResource("testfile")
+                .getPath();
         var stream = new ByteInputStream(path);
+        Map<Character, Integer> occurrences = huffman.getCharOccurrencesFromStream(stream);
+        Map<Character, Integer> expected = Map.of('l', 2, 'h', 1, 'e', 1, 'o', 1);
         
-        var occurrences = huffman.getCharOccurrencesFromStream(stream);
-        
-        assertEquals((Integer) 2, occurrences.get('l'));
-        assertEquals((Integer) 1, occurrences.get('h'));
-        assertEquals((Integer) 1, occurrences.get('e'));
-        assertEquals((Integer) 1, occurrences.get('o'));
+        assertEquals(expected, occurrences);
     }
     
     @Test
-    public void getHuffManTreeForestWorks() {
-        var occurrences = new HashMap<Character, Integer> (
-                Map.of('h', 5, 'e', 2, 'l', 1, 'o', 3));
+    public void getHuffManTreeForestReturnsExpectedQueue() {
+        Map<Character, Integer> occurrences = Map.of('h', 5, 'e', 2, 'l', 1, 'o', 3);
         PriorityQueue<TreeNode> treeForest = huffman.getHuffmanTreeForest(occurrences);
+        String result = "";
+        while(treeForest.peek() != null) {
+            result += treeForest.poll().getData();
+        }
         
-        assertEquals('l', (char) treeForest.poll().getData());
-        assertEquals('e', (char) treeForest.poll().getData());
+        assertEquals("leoh", result);
     }
     
     @Test
@@ -129,96 +129,73 @@ public class HuffmanTest {
     }
     
     @Test
-    public void createBitEncodingTableWorks() {
+    public void createBitEncodingTableReturnsTableWithRightCodes() {
         TreeNode root = getTreeRoot();
         var encodingTable = new HashMap<Character, String>();
         String code = "";
         
         huffman.createBitEncodingTable(encodingTable, code, root);
+        Map<Character, String> expected = Map.of('k', "0", 'l', "10", 'h', "11");
         
-        assertEquals("0", encodingTable.get('k'));
-        assertEquals("10", encodingTable.get('l'));
-        assertEquals("11", encodingTable.get('h'));
-        assertEquals(3, encodingTable.size());
+        assertEquals(expected, encodingTable);
     }
     
     @Test
-    public void createTopologyWorks() {
+    public void createTopologyCreatesExpectedByteArray() {
         TreeNode root = getTreeRoot();
         byte[] topology = new byte[9];
         huffman.createTopology(topology, 0, root);
+        byte[] expected =  {1, 'k', 1, 'l', 1, 'h', 0, 0, 0};
         
-        assertEquals((byte) 1, topology[0]);
-        assertEquals((byte) 'k', topology[1]);
-        assertEquals((byte) 1, topology[2]);
-        assertEquals((byte) 'l', topology[3]);
-        assertEquals((byte) 1, topology[4]);
-        assertEquals((byte) 'h', topology[5]);
-        assertEquals((byte) 0, topology[6]);
-        assertEquals((byte) 0, topology[7]);
-        assertEquals((byte) 0, topology[8]);
+        assertArrayEquals(expected, topology);
     }
     
     @Test
-    public void encodeDataWorks() throws IOException {
+    public void encodeDataWritesExpectedBytes() throws IOException {
         setUpFilePaths();
         var inputStream = new ByteInputStream(file);
         var outputStream = new ByteOutputStream(compressedFile);
-        var encodingTable = new HashMap<Character, String>();
-        encodingTable.put('o', "0");
-        encodingTable.put('b', "10");
-        encodingTable.put('c', "11");
+        var encodingTable = Map.of('o', "0", 'b', "10", 'c', "11");
         
         huffman.encodeData(encodingTable, inputStream, outputStream);
         
         Path compressedPath = Paths.get(compressedFile);
         var byteArray = Files.readAllBytes(compressedPath);
+        byte[] expected = {-46, 0};
         
-        assertEquals(-46, byteArray[0]);
-        assertEquals(0, byteArray[1]);
+        assertArrayEquals(expected, byteArray);
     }
     
     @Test
     public void compressedFileTopologySizeCorrectInHeader() throws IOException {
-        byte[] compressedFile = getCompressedFile();
+        byte[] topologySize = Arrays.copyOfRange(getCompressedFile(), 0, 4);
+        byte[] expected = {0, 0, 0, 9};
         
-        assertEquals(0, compressedFile[0]);
-        assertEquals(0, compressedFile[1]);
-        assertEquals(0, compressedFile[2]);
-        assertEquals(9, compressedFile[3]);
+        assertArrayEquals(expected, topologySize);
     }
     
     @Test
-    public void compressedFileUncompressedCharacterAmountCorrectInHeader() throws IOException {
-        byte[] compressedFile = getCompressedFile();
+    public void compressedFileUncompressedByteSizeCorrectInHeader() throws IOException {
+        byte[] byteSize = Arrays.copyOfRange(getCompressedFile(), 4, 8);
+        byte[] expected = {0, 0, 0, 7};
         
-        assertEquals(0, compressedFile[4]);
-        assertEquals(0, compressedFile[5]);
-        assertEquals(0, compressedFile[6]);
-        assertEquals(7, compressedFile[7]);
+        assertArrayEquals(expected, byteSize);
     }
     
     @Test
     public void compressedFileTopologyCorrect() throws IOException {
-        byte[] compressedFile = getCompressedFile();
+        byte[] topology = Arrays.copyOfRange(getCompressedFile(), 8, 17);
+        byte[] expected = {1, 111, 1, 98, 1, 99, 0, 0, 0};
         
-        assertEquals(1, compressedFile[8]);
-        assertEquals(111, compressedFile[9]);
-        assertEquals(1, compressedFile[10]);
-        assertEquals(98, compressedFile[11]);
-        assertEquals(1, compressedFile[12]);
-        assertEquals(99, compressedFile[13]);
-        assertEquals(0, compressedFile[14]);
-        assertEquals(0, compressedFile[15]);
-        assertEquals(0, compressedFile[16]);
+        assertArrayEquals(expected, topology);
     }
     
     @Test
     public void compressedFileDataCorrect() throws IOException {
-        byte[] compressedFile = getCompressedFile();
+        byte[] compressedFile = Arrays.copyOfRange(getCompressedFile(), 17, 19);
+        byte[] expected = {-46, 0};
         
-        assertEquals(-46, compressedFile[17]);
-        assertEquals(0, compressedFile[18]);
+        assertArrayEquals(expected, compressedFile);
     }
     
     @Test
