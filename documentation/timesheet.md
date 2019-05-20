@@ -29,5 +29,6 @@
 | ---------- | ----- | ------------------------------------------------- |
 | 2019-05-19 | 1     | refactoring and researching Huffman decompression |
 | 2019-05-19 | 1     | building Huffman's tree for decompression         |
-| 2019-05-19 | 2     | refactoring junit tests                           |
+| 2019-05-19 | 2     | refactoring JUnit tests                           |
+| 2019-05-20 | 2,5   | migrating to JUnit 5 and refactoring tests        |
 
