@@ -22,7 +22,6 @@ public class ByteOutputStream {
     /**
      * Writes a byte into a file.
      * @param b Byte to be written,
-     * @throws IOException 
      */
     public void writeByte(int b) {
         try {
@@ -35,7 +34,6 @@ public class ByteOutputStream {
     /**
      * Write a byte array into a file.
      * @param bArray Byte array to be written into a file.
-     * @throws IOException 
      */
     public void writeByteArray(byte[] bArray) {
         try {
@@ -46,8 +44,7 @@ public class ByteOutputStream {
     }
     
     /**
-     * Closes the FileOutputStream.
-     * @throws IOException 
+     * Closes the FileOutputStream. 
      */
     public void close() {
         try {

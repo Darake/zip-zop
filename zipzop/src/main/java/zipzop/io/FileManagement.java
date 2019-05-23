@@ -13,7 +13,6 @@ public class FileManagement {
      * Reads file as bytes into a byte array.
      * @param pathAsString Path to the file to be read as a String.
      * @return Byte array created from file
-     * @throws IOException 
      */
     public byte[] readFileToByteArray(String pathAsString) {
         try {

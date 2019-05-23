@@ -14,7 +14,6 @@ public class ByteInputStream {
     /**
      * Creates a new FileInputStream.
      * @param path A path to the file wanted to be read.
-     * @throws FileNotFoundException 
      */
     public ByteInputStream(String path) {
         try {
@@ -27,7 +26,6 @@ public class ByteInputStream {
     /**
      * Reads next byte as int from file.
      * @return int Returns read byte as int.
-     * @throws IOException 
      */
     public int nextByte() {
         try {
@@ -40,7 +38,6 @@ public class ByteInputStream {
     
     /**
      * Closes the FileInputStream.
-     * @throws IOException 
      */
     public void close() {
         try {
