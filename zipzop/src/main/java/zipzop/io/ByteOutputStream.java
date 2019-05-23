@@ -11,8 +11,12 @@ public class ByteOutputStream {
     
     private FileOutputStream stream;
     
-    public ByteOutputStream(String path) throws FileNotFoundException {
-        stream = new FileOutputStream(path);
+    public ByteOutputStream(String path) {
+        try {
+            stream = new FileOutputStream(path);
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
     }
     
     /**
@@ -20,8 +24,12 @@ public class ByteOutputStream {
      * @param b Byte to be written,
      * @throws IOException 
      */
-    public void writeByte(int b) throws IOException {
-        stream.write(b);
+    public void writeByte(int b) {
+        try {
+            stream.write(b);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
     
     /**
@@ -29,15 +37,23 @@ public class ByteOutputStream {
      * @param bArray Byte array to be written into a file.
      * @throws IOException 
      */
-    public void writeByteArray(byte[] bArray) throws IOException {
-        stream.write(bArray);
+    public void writeByteArray(byte[] bArray) {
+        try {
+            stream.write(bArray);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
     
     /**
      * Closes the FileOutputStream.
      * @throws IOException 
      */
-    public void close() throws IOException {
-        stream.close();
+    public void close() {
+        try {
+            stream.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }

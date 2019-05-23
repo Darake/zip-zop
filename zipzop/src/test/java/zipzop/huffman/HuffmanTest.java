@@ -223,4 +223,12 @@ public class HuffmanTest {
         
         stream.close();
     }
+    
+    @Test
+    @DisplayName("intInFourBytes returns the correct 4 bytes")
+    public void intInFourBytesReturnsCorrectBytes() {
+        byte[] expected = {0, 0, 5, 57};
+        
+        assertArrayEquals(expected, huffman.intInFourBytes(1337));
+    }
 }

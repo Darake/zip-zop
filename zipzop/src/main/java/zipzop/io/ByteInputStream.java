@@ -16,8 +16,12 @@ public class ByteInputStream {
      * @param path A path to the file wanted to be read.
      * @throws FileNotFoundException 
      */
-    public ByteInputStream(String path) throws FileNotFoundException {
-        this.stream = new FileInputStream(path);
+    public ByteInputStream(String path) {
+        try {
+            this.stream = new FileInputStream(path);
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
     }
     
     /**
@@ -25,15 +29,24 @@ public class ByteInputStream {
      * @return int Returns read byte as int.
      * @throws IOException 
      */
-    public int nextByte() throws IOException {
-        return stream.read();
+    public int nextByte() {
+        try {
+            return stream.read();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return -1;
+        }
     }
     
     /**
      * Closes the FileInputStream.
      * @throws IOException 
      */
-    public void close() throws IOException {
-        stream.close();
+    public void close() {
+        try {
+            stream.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }

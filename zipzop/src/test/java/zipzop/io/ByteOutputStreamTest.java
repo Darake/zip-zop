@@ -16,7 +16,7 @@ public class ByteOutputStreamTest {
     private String file;
     
     @BeforeEach
-    public void setUp(@TempDir Path tempDir) throws IOException {
+    public void setUp(@TempDir Path tempDir) {
         file = tempDir.resolve("output").toString();
         stream = new ByteOutputStream(file);
     }
@@ -51,8 +51,9 @@ public class ByteOutputStreamTest {
     @DisplayName("close terminates stream")
     public void closeTerminatesStream() throws IOException {
         stream.close();
-        assertThrows(IOException.class, () -> {
-            stream.writeByte(0);
-        });
+        stream.writeByte(0);    
+        var inputStream = new FileInputStream(file);
+        
+        assertEquals(-1, inputStream.read());
     }
 }

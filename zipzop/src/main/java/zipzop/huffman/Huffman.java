@@ -1,8 +1,5 @@
 package zipzop.huffman;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,9 +33,8 @@ public class Huffman {
      * occurrences are stored in a HashMap.
      * @param stream A input stream of a file
      * @return HashMap of occurrences
-     * @throws IOException 
      */
-    public HashMap<Character, Integer> getCharOccurrencesFromStream(ByteInputStream stream) throws IOException {
+    public HashMap<Character, Integer> getCharOccurrencesFromStream(ByteInputStream stream) {
         var charOccurrences = new HashMap<Character, Integer>();
         int data;
         while ((data = stream.nextByte()) != -1) {
@@ -140,10 +136,9 @@ public class Huffman {
      *                      the data.
      * @param inputStream   ByteInputStream for the file to be encoded.
      * @param outputStream  ByteOutputStream for the target output file.
-     * @throws IOException 
      */
     public void encodeData(Map<Character, String> encodingTable,
-            ByteInputStream inputStream, ByteOutputStream outputStream) throws IOException {
+            ByteInputStream inputStream, ByteOutputStream outputStream) {
         
         int b;
         String encodedBits = "";
@@ -168,13 +163,25 @@ public class Huffman {
     }
     
     /**
+     * Converts an int into a byte array with a size of 4 using bit shifting.
+     * @param number int to be converted into 4 byte array
+     * @return byte array of the int with a size of 4
+     */
+    public byte[] intInFourBytes(int number) {
+        return new byte[] {
+            (byte) (number >>> 24),
+            (byte) (number >>> 16),
+            (byte) (number >>> 8),
+            (byte) (number)
+        };
+    }
+    
+    /**
      * Compresses a file using Huffman's coding.
      * @param filePath Path to the file to be compressed as String.
      * @param compressedFilePath Wanted to path to the compressed file as String.
-     * @throws FileNotFoundException
-     * @throws IOException 
      */
-    public void compress(String filePath, String compressedFilePath) throws FileNotFoundException, IOException {
+    public void compress(String filePath, String compressedFilePath) {
         var occurrenceStream = new ByteInputStream(filePath);
         HashMap<Character, Integer> occurrences = getCharOccurrencesFromStream(occurrenceStream);
         PriorityQueue<TreeNode> treeForest = getHuffmanTreeForest(occurrences);
@@ -192,8 +199,8 @@ public class Huffman {
         
         int charsInFile = occurrences.values().stream().mapToInt(i->i).sum();
 
-        byte[] topologySizeBytes = ByteBuffer.allocate(4).putInt(topologySize).array();
-        byte[] charsInFileBytes = ByteBuffer.allocate(4).putInt(charsInFile).array();
+        byte[] topologySizeBytes = intInFourBytes(topologySize);
+        byte[] charsInFileBytes = intInFourBytes(charsInFile);
         outputStream.writeByteArray(topologySizeBytes);
         outputStream.writeByteArray(charsInFileBytes);
         outputStream.writeByteArray(topology);
@@ -209,9 +216,8 @@ public class Huffman {
      * @param stream The ByteInputStream of the file being decompressed. The
      *               stream must be at the start of tree's topology.
      * @return Returns the tree's root node.
-     * @throws IOException 
      */
-    public TreeNode buildTree(ByteInputStream stream) throws IOException {
+    public TreeNode buildTree(ByteInputStream stream) {
         var stack = new ArrayDeque<TreeNode>();
         int b;
         while (true) {

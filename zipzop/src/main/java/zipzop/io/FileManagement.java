@@ -15,9 +15,14 @@ public class FileManagement {
      * @return Byte array created from file
      * @throws IOException 
      */
-    public byte[] readFileToByteArray(String pathAsString) throws IOException {
-        var path = Paths.get(pathAsString);
-        var byteArray = Files.readAllBytes(path);
-        return byteArray;
+    public byte[] readFileToByteArray(String pathAsString) {
+        try {
+            var path = Paths.get(pathAsString);
+            var byteArray = Files.readAllBytes(path);
+            return byteArray;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 }
