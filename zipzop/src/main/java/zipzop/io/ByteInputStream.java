@@ -3,6 +3,7 @@ package zipzop.io;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * Used to read bytes from a file one byte at a time.
@@ -30,6 +31,21 @@ public class ByteInputStream {
     public int nextByte() {
         try {
             return stream.read();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return -1;
+        }
+    }
+    
+    /**
+     * Reads the next four bytes and converts them into an int.
+     * @return Returns an int representation of four bytes read
+     */
+    public int nextDoubleWord() {
+        try {
+            var dword = new byte[4];
+            stream.read(dword);
+            return ByteBuffer.wrap(dword).getInt();
         } catch (IOException ex) {
             ex.printStackTrace();
             return -1;

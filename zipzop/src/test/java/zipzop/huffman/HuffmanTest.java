@@ -1,5 +1,7 @@
 package zipzop.huffman;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -126,6 +128,32 @@ public class HuffmanTest {
         
             assertArrayEquals(expected, topology);
         }
+        
+        @Nested
+        @DisplayName("decode tests")
+        class DecodeTests {
+            
+            private StringBuilder encodedData;
+        
+            @BeforeEach
+            public void setUp() {
+                encodedData = new StringBuilder("101");
+            }
+        
+            @Test
+            @DisplayName("decode returns a correct decoded byte")
+            public void decodeReturnsCorrectByte() {
+                assertEquals('l', huffman.decode(encodedData, root));
+            }
+        
+            @Test
+            @DisplayName("decode changes encodedData String correctly")
+            public void decodeChangesEncodedData() {
+                huffman.decode(encodedData, root);
+                
+                assertEquals("1", encodedData.toString());
+            }
+        }
     }
     
     @Nested
@@ -229,5 +257,17 @@ public class HuffmanTest {
         byte[] expected = {0, 0, 5, 57};
         
         assertArrayEquals(expected, huffman.intInFourBytes(1337));
+    }
+    
+    @Test
+    @DisplayName("decompress works as expected")
+    public void decompressWorks(@TempDir Path tempDir) throws FileNotFoundException, IOException {
+        String input = getClass().getClassLoader().getResource("compressedFile").getPath();
+        String output = tempDir.resolve("output").toString();
+        huffman.decompress(input, output);
+        var stream = new FileInputStream(output);
+        byte[] data = stream.readAllBytes();
+        
+        assertEquals("coboboo", new String(data));
     }
 }

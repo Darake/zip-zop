@@ -25,6 +25,12 @@ public class ByteInputStreamTest {
     }
     
     @Test
+    @DisplayName("nextDoubleWord returns a right int")
+    public void nextDoubleWordReturnsRightInt() {
+        assertEquals(1751477356, stream.nextDoubleWord());
+    }
+    
+    @Test
     @DisplayName("close termintates stream")
     public void closeTerminatesStream() {
         stream.close();

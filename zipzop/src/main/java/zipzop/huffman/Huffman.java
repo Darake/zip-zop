@@ -233,5 +233,54 @@ public class Huffman {
         }
         return stack.poll();
     }
+    
+    /**
+     * Finds the next decoded character in the encoded data by traversing the
+     * Huffman tree.
+     * @param encodedData StringBuilder object containing the encoded data in
+     *                    bit representation
+     * @param node TreeNode of the next node to be traversed in Huffman tree
+     * @return Returns the first decoded byte got from encoded data
+     */
+    public byte decode(StringBuilder encodedData, TreeNode node) {
+        if (node.getData() != null) {
+            return (byte) (char) node.getData();
+        }
+        
+        if (encodedData.charAt(0) == '0') {
+            encodedData.deleteCharAt(0);
+            return decode(encodedData, node.getLeftChild());
+        } else {
+            encodedData.deleteCharAt(0);
+            return decode(encodedData, node.getRightChild());
+        }
+    }
+    
+    /**
+     * Decompresses a file compressed by the same Huffman compression.
+     * @param inputPath Path to the compressed file as String
+     * @param outputPath Path to the generated decompressed file as String
+     */
+    public void decompress(String inputPath, String outputPath) {
+        var inputStream = new ByteInputStream(inputPath);
+        var outputStream = new ByteOutputStream(outputPath);
+        
+        int topologySize = inputStream.nextDoubleWord();
+        int uncompressedFileSize = inputStream.nextDoubleWord();
+        TreeNode root = buildTree(inputStream);
+        
+        int outputSize = 0;
+        int firstDataByte = inputStream.nextByte();
+        /* "+ 0x100" Ensures that the binary string is padded with 0s. The added 1 infront of the binary
+        string is removed with ".substring(1). An extra byte is read before decoding because a encoded
+        data can be spanned from between two bytes.*/
+        StringBuilder encodedDataBuffer = new StringBuilder(Integer.toBinaryString((firstDataByte & 0xFF) + 0x100).substring(1));
+        while (outputSize < uncompressedFileSize) {
+            encodedDataBuffer.append(Integer.toBinaryString((inputStream.nextByte() & 0xFF) + 0x100).substring(1));
+            byte nextDecodedByte = decode(encodedDataBuffer, root);
+            outputStream.writeByte(nextDecodedByte);
+            outputSize++;
+        }
+    }
 }
     
