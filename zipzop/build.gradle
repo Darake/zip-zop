@@ -35,7 +35,7 @@ jacoco {
 
 test {
   useJUnitPlatform()
-  testLogging.showStandardStreams = true
+  testLogging.showStandardStreams = false
 }
 
 check.dependsOn jacocoTestReport

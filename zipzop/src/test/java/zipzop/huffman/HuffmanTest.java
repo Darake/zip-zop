@@ -1,6 +1,5 @@
 package zipzop.huffman;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,7 +49,7 @@ public class HuffmanTest {
         
         @Test
         @DisplayName("getCharOccurrencesFromStream returns a map with correct values")
-        public void getCharOccurrencesFromStreamReturnsExpectedMap() throws FileNotFoundException, IOException {
+        public void getCharOccurrencesFromStreamReturnsExpectedMap() {
             String path = getClass()
                     .getClassLoader()
                     .getResource("testfile")
@@ -144,7 +143,7 @@ public class HuffmanTest {
         
         @Test
         @DisplayName("encodeData writes correct bytes into output file")
-        public void encodeDataWritesExpectedBytes(@TempDir Path tempDir) throws IOException {;  
+        public void encodeDataWritesExpectedBytes(@TempDir Path tempDir) throws IOException {
             var inputStream = new ByteInputStream(input);
             var outputStream = new ByteOutputStream(output);
             var encodingTable = Map.of('o', "0", 'b', "10", 'c', "11");
@@ -170,7 +169,7 @@ public class HuffmanTest {
             
             @Test
             @DisplayName("creates a file where the 4 byte integer for topology size is correct")
-            public void compressedFileTopologySizeCorrectInHeader() throws IOException {
+            public void compressedFileTopologySizeCorrectInHeader() {
                 byte[] topologySize = Arrays.copyOfRange(compressedFile, 0, 4);
                 byte[] expected = {0, 0, 0, 9};
         
@@ -179,7 +178,7 @@ public class HuffmanTest {
             
             @Test
             @DisplayName("creates a file where the 4 byte integer for uncompressed file size is correct")
-             public void compressedFileUncompressedByteSizeCorrectInHeader() throws IOException {
+             public void compressedFileUncompressedByteSizeCorrectInHeader() {
                 byte[] byteSize = Arrays.copyOfRange(compressedFile, 4, 8);
                 byte[] expected = {0, 0, 0, 7};
         
@@ -188,7 +187,7 @@ public class HuffmanTest {
     
             @Test
             @DisplayName("creates a file where the topology is correct")
-            public void compressedFileTopologyCorrect() throws IOException {
+            public void compressedFileTopologyCorrect() {
                 byte[] topology = Arrays.copyOfRange(compressedFile, 8, 17);
                 byte[] expected = {1, 111, 1, 98, 1, 99, 0, 0, 0};
         
@@ -197,7 +196,7 @@ public class HuffmanTest {
     
             @Test
             @DisplayName("creates a file where the encoded data is correct")
-            public void compressedFileDataCorrect() throws IOException {
+            public void compressedFileDataCorrect() {
                 byte[] encodedData = Arrays.copyOfRange(compressedFile, 17, 19);
                 byte[] expected = {-46, 0};
         
@@ -208,7 +207,7 @@ public class HuffmanTest {
     
     @Test
     @DisplayName("buildTree builds a tree with leaves in right positions")
-    public void buildTreeWorks() throws FileNotFoundException, IOException {
+    public void buildTreeWorks() {
         String path = getClass()
                 .getClassLoader()
                 .getResource("treeBuildingTestFile")
