@@ -10,6 +10,7 @@ import zipzop.io.ByteOutputStream;
  */
 public class Huffman {
     
+    
     /**
      * Counts all byte occurrences from the parameter's input stream.
      * @param stream ByteInputStream of a file being read
