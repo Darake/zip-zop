@@ -33,3 +33,14 @@
 | 2019-05-20 | 2,5   | migrating to JUnit 5 and refactoring tests                   |
 | 2019-05-23 | 1     | get rid of all library imports from huffman class by abstracting |
 
+## Week 4
+
+| Date       | Hours | Worked on                                                  |
+| ---------- | ----- | ---------------------------------------------------------- |
+| 2019-05-25 | 4     | Huffman decompression                                      |
+| 2019-05-26 | 2     | testing Huffman's coding with real files and fixing issues |
+| 2019-05-27 | 2     | GUI                                                        |
+| 2019-05-28 | 1     | replacing HashMap usage with array implementations         |
+| 2019-05-28 | 1     | researching heap implementation                            |
+| 2019-05-28 | 1     | starting min heap implementation                           |
+
