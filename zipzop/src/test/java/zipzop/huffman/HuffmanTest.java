@@ -7,8 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.PriorityQueue;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,45 +26,33 @@ public class HuffmanTest {
     public void setUp() {
         huffman = new Huffman();
     }
-    
-    @Nested
-    @DisplayName("Tests for occurrences")
-    class OccurrenceTests {
-        
-        private Map<Character, Integer> expected;
-        
-        @BeforeEach
-        public void setUp() {
-            expected = Map.of('l', 2, 'h', 1, 'e', 1, 'o', 1);
-        }
-        
-        @Test
-        @DisplayName("getCharOccurrencesInByteArray returns a map with correct values")
-        public void getCharOccurrencesInByteArrayReturnsExpectedMap() {
-            var byteArray = "hello".getBytes();
-            Map<Character, Integer> occurrences = huffman.getCharOccurrencesInByteArray(byteArray);
-        
-            assertEquals(expected, occurrences);
-        }
-        
-        @Test
-        @DisplayName("getCharOccurrencesFromStream returns a map with correct values")
-        public void getCharOccurrencesFromStreamReturnsExpectedMap() {
-            String path = getClass()
-                    .getClassLoader()
-                    .getResource("testfile")
-                    .getPath();
-            var stream = new ByteInputStream(path);
-            Map<Character, Integer> occurrences = huffman.getCharOccurrencesFromStream(stream);
-        
-            assertEquals(expected, occurrences);
-        }
+       
+    @Test
+    @DisplayName("getOccurrencesFromStream returns a correct array")
+    public void getOccurrencesFromStreamReturnsCorrectArray() {
+        String path = getClass()
+                .getClassLoader()
+                .getResource("testfile")
+                .getPath();
+        var stream = new ByteInputStream(path);
+        int[] expected = new int[256];
+        expected['l' & 0xFF] = 2;
+        expected['h' & 0xFF] = 1;
+        expected['e' & 0xFF] = 1;
+        expected['o' & 0xFF] = 1;
+        int[] occurrences = huffman.getOccurrencesFromStream(stream);
+            
+        assertArrayEquals(expected, occurrences);
     }
     
     @Test
     @DisplayName("getHuffManTreeForest returns a queue with nodes in right order")
     public void getHuffManTreeForestReturnsExpectedQueue() {
-        Map<Character, Integer> occurrences = Map.of('h', 5, 'e', 2, 'l', 1, 'o', 3);
+        int[] occurrences = new int[256];
+        occurrences['h' & 0xFF] = 5;
+        occurrences['e' & 0xFF] = 2;
+        occurrences['l' & 0xFF] = 1;
+        occurrences['o' & 0xFF] = 3;
         PriorityQueue<TreeNode> treeForest = huffman.getHuffmanTreeForest(occurrences);
         String result = "";
         while(treeForest.peek() != null) {
@@ -112,11 +98,14 @@ public class HuffmanTest {
         @DisplayName("createBitEncodingTable inserts correct values to the map")
         public void createBitEncodingTableReturnsTableWithRightCodes() {
             String code = "";
-            var encodingTable = new HashMap<Character, String>();
+            var encodingTable = new String[256];
             huffman.createBitEncodingTable(encodingTable, code, root);
-            Map<Character, String> expected = Map.of('k', "0", 'l', "10", 'h', "11");
+            String[] expected = new String[256];
+            expected['k' & 0xFF] = "0";
+            expected['l' & 0xFF] = "10";
+            expected['h' & 0xFF] = "11";
         
-            assertEquals(expected, encodingTable);
+            assertArrayEquals(expected, encodingTable);
         }
         
         @Test
@@ -174,7 +163,10 @@ public class HuffmanTest {
         public void encodeDataWritesExpectedBytes(@TempDir Path tempDir) throws IOException {
             var inputStream = new ByteInputStream(input);
             var outputStream = new ByteOutputStream(output);
-            var encodingTable = Map.of('o', "0", 'b', "10", 'c', "11");
+            String[] encodingTable = new String[256];
+            encodingTable['o' & 0xFF] = "0";
+            encodingTable['b' & 0xFF] = "10";
+            encodingTable['c' & 0xFF] = "11";
             huffman.encodeData(encodingTable, inputStream, outputStream);
             var byteArray = Files.readAllBytes(Paths.get(output));
             byte[] expected = {-46, 0};

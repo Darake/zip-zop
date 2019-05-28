@@ -1,8 +1,6 @@
 package zipzop.huffman;
 
 import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.PriorityQueue;
 import zipzop.io.ByteInputStream;
 import zipzop.io.ByteOutputStream;
@@ -13,35 +11,18 @@ import zipzop.io.ByteOutputStream;
 public class Huffman {
     
     /**
-     * Counts all char occurrences in parameter's byte array by casting byte into
-     * char and adding it to HashMap.
-     * @param byteArray
-     * @return HashMap where the key is a char and the value is occurrence of
-     * that char in byte array.
+     * Counts all byte occurrences from the parameter's input stream.
+     * @param stream ByteInputStream of a file being read
+     * @return Returns an array of occurrences for each byte/char
      */
-    public HashMap<Character, Integer> getCharOccurrencesInByteArray(byte[] byteArray) {
-        var charOccurrences = new HashMap<Character, Integer>();
-        for (byte b : byteArray) {
-            charOccurrences.merge((char) b, 1, (x, y) -> x + y);
+    public int[] getOccurrencesFromStream(ByteInputStream stream) {
+        var occurrences = new int[256];
+        int nextByte;
+        while ((nextByte = stream.nextByte()) != -1) {
+            //Turns signed int into an unsigned one
+            occurrences[nextByte & 0xFF]++;
         }
-        return charOccurrences;
-    }
-    
-    /**
-     * Counts all char occurrences from the parameter's input stream. File is
-     * read byte by byte and each byte is cast into char. Chars and their 
-     * occurrences are stored in a HashMap.
-     * @param stream A input stream of a file
-     * @return HashMap of occurrences
-     */
-    public HashMap<Character, Integer> getCharOccurrencesFromStream(ByteInputStream stream) {
-        var charOccurrences = new HashMap<Character, Integer>();
-        int data;
-        while ((data = stream.nextByte()) != -1) {
-            charOccurrences.merge((char) data, 1, (x, y) -> x + y);
-        }
-        stream.close();
-        return charOccurrences;
+        return occurrences;
     }
     
     /**
@@ -50,11 +31,15 @@ public class Huffman {
      * @param occurrences A HashMap of character occurrences.
      * @return PriorityQueue of TreeNodes
      */
-    public PriorityQueue<TreeNode> getHuffmanTreeForest(Map<Character, Integer> occurrences) {
+    public PriorityQueue<TreeNode> getHuffmanTreeForest(int[] occurrences) {
         var treeForest = new PriorityQueue<TreeNode>();
-        for (Map.Entry<Character, Integer> occurrence : occurrences.entrySet()) {
-            var node = new TreeNode(occurrence.getValue(), occurrence.getKey());
-            treeForest.add(node);
+        for (int i = 0; i < occurrences.length; i++) {
+            if (occurrences[i] != 0) {
+                /*Turns unsigned int back into signed by casting it to a byte
+                and then casts that into the wanted char*/
+                var node = new TreeNode(occurrences[i], (char) (byte) i);
+                treeForest.add(node);
+            }
         }
         return treeForest;
     }
@@ -77,13 +62,13 @@ public class Huffman {
     
     /**
      * Creates a bit encoding table out of a Huffman tree recursively.
-     * @param table A Character/String HashMap where the table is added to.
+     * @param table A String array where the table is created to.
      * @param code The character encoded Binary value so far into the recursion.
      *             Use an empty String when first calling the method.
      * @param node The TreeNode being handled in the next step of recursion.
      *             Use the tree's root when first calling the method.
      */
-    public void createBitEncodingTable(HashMap<Character, String> table, String code, TreeNode node) {
+    public void createBitEncodingTable(String[] table, String code, TreeNode node) {
         if (node.hasLeftChild()) {
             String newCode = code + "0";
             createBitEncodingTable(table, newCode, node.getLeftChild());
@@ -95,7 +80,7 @@ public class Huffman {
         }
         
         if (node.getData() != null) {
-            table.put(node.getData(), code);
+            table[(char) node.getData() & 0xFF] = code;
         }
 
         return;
@@ -137,19 +122,24 @@ public class Huffman {
      * @param inputStream   ByteInputStream for the file to be encoded.
      * @param outputStream  ByteOutputStream for the target output file.
      */
-    public void encodeData(Map<Character, String> encodingTable,
+    public void encodeData(String[] encodingTable,
             ByteInputStream inputStream, ByteOutputStream outputStream) {
         
         int b;
         String encodedBits = "";
         while ((b = inputStream.nextByte()) != -1) {
-            String encodedValue = encodingTable.get((char) b);
+            String encodedValue = encodingTable[b & 0xFF];
             encodedBits += encodedValue;
             if (encodedBits.length() >= 8) {
                 byte nextByteWritten = (byte) Integer.parseInt(encodedBits.substring(0, 8), 2);
                 encodedBits = encodedBits.substring(8);
                 outputStream.writeByte(nextByteWritten);
             }
+        }
+        while (encodedBits.length() >= 8) {
+            byte nextByteWritten = (byte) Integer.parseInt(encodedBits.substring(0, 8), 2);
+            encodedBits = encodedBits.substring(8);
+            outputStream.writeByte(nextByteWritten);
         }
         if (!encodedBits.isEmpty()) {
             int zeros = 8 - encodedBits.length();
@@ -183,26 +173,36 @@ public class Huffman {
      */
     public void compress(String filePath, String compressedFilePath) {
         var occurrenceStream = new ByteInputStream(filePath);
-        HashMap<Character, Integer> occurrences = getCharOccurrencesFromStream(occurrenceStream);
+        int[] occurrences = getOccurrencesFromStream(occurrenceStream);
         PriorityQueue<TreeNode> treeForest = getHuffmanTreeForest(occurrences);
         TreeNode root = getHuffmanTreeRoot(treeForest);
         
-        var encodingTable = new HashMap<Character, String>();
+        var encodingTable = new String[256];
         createBitEncodingTable(encodingTable, "", root);
         
-        int topologySize = encodingTable.size() * 3;
+        int topologySize = 0;
+        for (String string : encodingTable) {
+            if (string != null) {
+                topologySize++;
+            }
+        }
+        topologySize *= 3;
+        
         var topology = new byte[topologySize];
         createTopology(topology, 0, root);
         
         var inputStream = new ByteInputStream(filePath);
         var outputStream = new ByteOutputStream(compressedFilePath);
         
-        int charsInFile = occurrences.values().stream().mapToInt(i->i).sum();
+        int fileSize = 0;
+        for (int occurrence : occurrences) {
+            fileSize += occurrence;
+        }
 
         byte[] topologySizeBytes = intInFourBytes(topologySize);
-        byte[] charsInFileBytes = intInFourBytes(charsInFile);
+        byte[] fileSizeBytes = intInFourBytes(fileSize);
         outputStream.writeByteArray(topologySizeBytes);
-        outputStream.writeByteArray(charsInFileBytes);
+        outputStream.writeByteArray(fileSizeBytes);
         outputStream.writeByteArray(topology);
         
         encodeData(encodingTable, inputStream, outputStream);
