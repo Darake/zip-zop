@@ -43,4 +43,5 @@
 | 2019-05-28 | 1     | replacing HashMap usage with array implementations         |
 | 2019-05-28 | 1     | researching heap implementation                            |
 | 2019-05-28 | 1     | starting min heap implementation                           |
+| 2019-05-29 | 1     | min heap                                                   |
 
