@@ -13,14 +13,21 @@ public class MinHeapTest {
     
     @BeforeEach
     public void setUp() {
-        this.minHeap = new MinHeap<TreeNode>(256);
+        this.minHeap = new MinHeap<>(256);
     }
     
     @Test
-    @DisplayName("add adds right object to right index")
+    @DisplayName("objects start at index 1")
     public void addAddsObjectToRightIndex() {
-        minHeap.add(new TreeNode('a'));
+        var node = new TreeNode('a');
+        minHeap.add(node);
         
-        assertEquals('a', minHeap.getHeap()[1].getData());
+        assertEquals(node, minHeap.getHeap()[1]);
+    }
+    
+    @Test
+    @DisplayName("objects are in right order")
+    public void objectsAreInRightOrder() {
+        
     }
 }

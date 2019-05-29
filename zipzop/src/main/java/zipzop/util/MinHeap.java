@@ -9,18 +9,19 @@ public class MinHeap<T extends Comparable<T>> {
     private int size;
     
     public MinHeap(int maxSize) {
-        this.heap = (T[]) new Object[maxSize];
+        this.heap = (T[]) new Comparable[maxSize];
         this.size = 0;
     }
     
     public void add(T object) {
-        heap[size++] = object;
-        moveUp();
+        size++;
+        heap[size] = object;
+        moveAddedUp();
     }
     
-    private void moveUp() {
+    private void moveAddedUp() {
         int i = size;
-        while (i > 0) {
+        while (i > 1) {
             if (heap[i].compareTo(heap[i/2]) > 0) {
                 swap(i, i/2);
                 i = i/2;
@@ -36,7 +37,7 @@ public class MinHeap<T extends Comparable<T>> {
         heap[a] = temp;
     }
     
-    public T[] getHeap() {
+    public Comparable[] getHeap() {
         return heap;
     }
     
