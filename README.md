@@ -6,7 +6,8 @@ Zip-Zop is a compression software using lossless compression algorithms. The pro
 
 ## Documentation
 
-[Software requirements specification](<https://github.com/Darake/zip-zop/blob/master/documentation/SRS.md>)
+[Software requirements specification](<https://github.com/Darake/zip-zop/blob/master/documentation/SRS.md>)  
+[Implementation](<https://github.com/Darake/zip-zop/blob/master/documentation/implementation.md>)  
 
 
 
