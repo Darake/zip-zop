@@ -18,7 +18,6 @@ repositories {
 
 dependencies {
     testImplementation(
-            'junit:junit:4.12',
             'org.junit.jupiter:junit-jupiter-api:5.4.2'
     )
     testRuntime(
@@ -44,8 +43,19 @@ javafx {
 }
 
 test {
-  useJUnitPlatform()
+  useJUnitPlatform {
+      excludeTags 'performance'
+  }
   testLogging.showStandardStreams = false
+}
+
+task performanceTests(type: Test) {
+    useJUnitPlatform {
+        includeTags 'performance'
+    }
+    check.dependsOn it
+    shouldRunAfter test
+    testLogging.showStandardStreams = true
 }
 
 check.dependsOn jacocoTestReport

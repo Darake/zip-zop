@@ -44,4 +44,7 @@
 | 2019-05-28 | 1     | researching heap implementation                            |
 | 2019-05-28 | 1     | starting min heap implementation                           |
 | 2019-05-29 | 1     | min heap                                                   |
+| 2019-05-29 | 1     | implementation documentation                               |
+| 2019-05-31 | 3     | performance testing                                        |
+| 2019-05-31 | 1     | testing documentation                                      |
 
