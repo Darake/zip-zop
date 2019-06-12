@@ -4,7 +4,6 @@
 
 The project consists of four main packages, which are [huffman](<https://github.com/Darake/zip-zop/tree/master/zipzop/src/main/java/zipzop/huffman>), [io](<https://github.com/Darake/zip-zop/tree/master/zipzop/src/main/java/zipzop/io>), [util](<https://github.com/Darake/zip-zop/tree/master/zipzop/src/main/java/zipzop/util>) and [ui](<https://github.com/Darake/zip-zop/tree/master/zipzop/src/main/java/zipzop/ui>).
 
-<img src="https://raw.githubusercontent.com/Darake/zip-zop/master/documentation/images/i-1.png" width="450">  
 
 ### Huffman
 
