@@ -1,9 +1,9 @@
 package zipzop.huffman;
 
 import java.util.ArrayDeque;
-import java.util.PriorityQueue;
 import zipzop.io.ByteInputStream;
 import zipzop.io.ByteOutputStream;
+import zipzop.util.MinHeap;
 
 /**
  * Class for Huffman's algorithm
@@ -27,13 +27,13 @@ public class Huffman {
     }
     
     /**
-     * Creates a priority queue made out of Huffman tree nodes. The nodes are
+     * Creates a min heap made out of Huffman tree nodes. The nodes are
      * ordered primary by their weight and secondary if they are a leaf or not.
      * @param occurrences A HashMap of character occurrences.
-     * @return PriorityQueue of TreeNodes
+     * @return MinHeap of TreeNodes
      */
-    public PriorityQueue<TreeNode> getHuffmanTreeForest(int[] occurrences) {
-        var treeForest = new PriorityQueue<TreeNode>();
+    public MinHeap<TreeNode> getHuffmanTreeForest(int[] occurrences) {
+        var treeForest = new MinHeap<TreeNode>(256);
         for (int i = 0; i < occurrences.length; i++) {
             if (occurrences[i] != 0) {
                 /*Turns unsigned int back into signed by casting it to a byte
@@ -47,10 +47,10 @@ public class Huffman {
     
     /**
      * Creates a Huffman tree.
-     * @param treeForest Nodes to be added to the tree contained in a PriorityQueue
+     * @param treeForest Nodes to be added to the tree contained in a MinHeap
      * @return Returns the Huffman tree's root node
      */
-    public TreeNode getHuffmanTreeRoot(PriorityQueue<TreeNode> treeForest) {
+    public TreeNode getHuffmanTreeRoot(MinHeap<TreeNode> treeForest) {
         while (treeForest.size() > 1) {
             TreeNode rightChild = treeForest.poll();
             TreeNode leftChild = treeForest.poll();
@@ -175,7 +175,7 @@ public class Huffman {
     public void compress(String filePath, String compressedFilePath) {
         var occurrenceStream = new ByteInputStream(filePath);
         int[] occurrences = getOccurrencesFromStream(occurrenceStream);
-        PriorityQueue<TreeNode> treeForest = getHuffmanTreeForest(occurrences);
+        MinHeap<TreeNode> treeForest = getHuffmanTreeForest(occurrences);
         TreeNode root = getHuffmanTreeRoot(treeForest);
         
         var encodingTable = new String[256];

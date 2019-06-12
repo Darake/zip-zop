@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.PriorityQueue;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import zipzop.io.ByteInputStream;
 import zipzop.io.ByteOutputStream;
+import zipzop.util.MinHeap;
 
 @DisplayName("Huffman tests")
 public class HuffmanTest {
@@ -53,7 +53,7 @@ public class HuffmanTest {
         occurrences['e' & 0xFF] = 2;
         occurrences['l' & 0xFF] = 1;
         occurrences['o' & 0xFF] = 3;
-        PriorityQueue<TreeNode> treeForest = huffman.getHuffmanTreeForest(occurrences);
+        MinHeap<TreeNode> treeForest = huffman.getHuffmanTreeForest(occurrences);
         String result = "";
         while(treeForest.peek() != null) {
             result += treeForest.poll().getData();
@@ -65,7 +65,7 @@ public class HuffmanTest {
     @Test
     @DisplayName("getHuffmanTreeRoot creates a tree with leaves in the right positions")
     public void getHuffmanTreeRootLeavesInCorrectPositions() {
-        var treeForest = new PriorityQueue<TreeNode>();
+        var treeForest = new MinHeap<TreeNode>(256);
         treeForest.add(new TreeNode(2, 'h'));
         treeForest.add(new TreeNode(5, 'l'));
         treeForest.add(new TreeNode(1, 's'));
