@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import zipzop.io.ByteInputStream;
 import zipzop.io.ByteOutputStream;
 import zipzop.util.MinHeap;
+import zipzop.util.Stack;
 
 /**
  * Class for Huffman's algorithm
@@ -219,20 +220,20 @@ public class Huffman {
      * @return Returns the tree's root node.
      */
     public TreeNode buildTree(ByteInputStream stream) {
-        var stack = new ArrayDeque<TreeNode>();
+        var stack = new Stack<TreeNode>();
         int b;
         while (true) {
             if ((b = stream.nextByte()) == 0) {
                 if (stack.size() == 1) break;
-                var rightChild = stack.pollLast();
-                var leftChild = stack.pollLast();
-                stack.add(new TreeNode(leftChild, rightChild));
+                var rightChild = stack.pop();
+                var leftChild = stack.pop();
+                stack.push(new TreeNode(leftChild, rightChild));
             } else {
                 b = stream.nextByte();
-                stack.add(new TreeNode((char) b));
+                stack.push(new TreeNode((char) b));
             }
         }
-        return stack.poll();
+        return stack.pop();
     }
     
     /**
