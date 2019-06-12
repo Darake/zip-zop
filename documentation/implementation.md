@@ -16,8 +16,27 @@ The io package contains the classes needed for input and output. All the applica
 
 ### util
 
-Util package is used for data structure implementations. At this moment, only a single class resides here, which is the [MinHeap](<https://github.com/Darake/zip-zop/blob/master/zipzop/src/main/java/zipzop/util/MinHeap.java>) class.
+Util package is used for data structure implementations. At the moment it includes a [MinHeap](<https://github.com/Darake/zip-zop/blob/master/zipzop/src/main/java/zipzop/util/MinHeap.java>) implementation and a [Stack](https://github.com/Darake/zip-zop/blob/master/zipzop/src/main/java/zipzop/util/Stack.java) implementation.
 
 ### ui
 
 The ui package contains all the ui related classes, which at the moment is limited to a simple [GUI](<https://github.com/Darake/zip-zop/blob/master/zipzop/src/main/java/zipzop/ui/GUI.java>) class.
+
+
+
+## Algorithms
+
+### Huffman coding
+
+#### Compression
+
+The Huffman coding implementation starts with going through the input file and counting all the occurrences. Occurrences are saved into an array, so no library imports are needed. This achieved with converting each read byte into an unsigned integer. Since a byte can only represent so many integers, the static array size is not an issue. The time complexity for this operation is directly related to the file size in other words O(n).
+
+After getting occurrences from a file a node for a tree is created for each character representation of the byte occurred. Nodes are added into a min heap. This doesn't take any time of significance. At worst the amount of characters to be added to the heap are 256 characters since an unsigned byte can only represent values from 0 to 255. Each insertion takes O(log m), where m is the amount of nodes in heap at insertion time. The nodes are ordered depending on the occurrences in the heap. Chars with less occurrences come first.
+
+After creating a node representation of all the chars and their occurrences a Huffman tree is built from those nodes. Two nodes are polled from the heap and a parent is made with those as children. The parent has a weight which equals the children's occurrences summed. The parent is added back into the heap. This keeps going until there is only one node left in heap. The one left is the tree's root. Like in the last paragraph, each insertion and deletion from heap has a O(log m) time complexity.
+
+When a Huffman tree is created, the encoding table can be built with it. Encoding table is created by traversing the tree in postorder recursively. For each traverse to a left child a "0" is added into the characters encoding and a "1" is added when traversing right. When reaching a leaf, the encoding accumulated with recursion is the leaf's encoding. The encoding table is saved into an array in same fashion as saving occurrences to an array. Traversing the tree has a O(k) time complexity, where k is the amount of nodes in the tree.
+
+When all the needed information has been collected and calculated, the encoding itself is done. The input file is gone through byte by byte while writing the bytes encoded data into the output file. For each byte, the encoding of it found in the encoding table. Bytes encodings are collected into a string representations of binary and when the length passes 8, the file is written into the output file. The time complexity of encoding itself is directly related to the file size i.e. O(n), where n is the size of the file.
+

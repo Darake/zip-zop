@@ -48,3 +48,11 @@
 | 2019-05-31 | 3     | performance testing                                        |
 | 2019-05-31 | 1     | testing documentation                                      |
 
+## Week 6
+
+| Date       | Hours | Worked on          |
+| ---------- | ----- | ------------------ |
+| 2019-06-12 | 3     | min heap           |
+| 2019-06-12 | 1     | stack              |
+| 2019-06-12 | 2     | implementation doc |
+
