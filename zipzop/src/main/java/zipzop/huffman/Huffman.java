@@ -1,6 +1,5 @@
 package zipzop.huffman;
 
-import java.util.ArrayDeque;
 import zipzop.io.ByteInputStream;
 import zipzop.io.ByteOutputStream;
 import zipzop.util.MinHeap;

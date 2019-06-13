@@ -2,6 +2,7 @@ plugins {
   id 'application'
   id 'org.openjfx.javafxplugin' version '0.0.7'
   id 'org.beryx.jlink' version '2.9.4'
+  id 'com.github.johnrengelman.shadow' version '5.0.0'
 }
 apply plugin: 'java'
 sourceCompatibility = 11
@@ -9,7 +10,9 @@ targetCompatibility = 11
 apply plugin: 'jacoco'
 apply plugin: 'application'
 
-mainClassName = 'zipzop.ui.GUI'
+application {
+    mainClassName = 'zipzop.ui.Main'
+}
 
 repositories {
     jcenter()
@@ -30,6 +33,11 @@ jacocoTestReport {
     reports {
         xml.enabled = true
         html.enabled = true
+    }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: 'zipzop/ui/**')
+        })
     }
 }
 
