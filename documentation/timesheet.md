@@ -50,9 +50,11 @@
 
 ## Week 6
 
-| Date       | Hours | Worked on          |
-| ---------- | ----- | ------------------ |
-| 2019-06-12 | 3     | min heap           |
-| 2019-06-12 | 1     | stack              |
-| 2019-06-12 | 2     | implementation doc |
+| Date       | Hours | Worked on                          |
+| ---------- | ----- | ---------------------------------- |
+| 2019-06-12 | 3     | min heap                           |
+| 2019-06-12 | 1     | stack                              |
+| 2019-06-12 | 2     | implementation doc                 |
+| 2019-06-13 | 1,5   | documentation                      |
+| 2019-06-13 | 1     | generating a jar with dependencies |
 
