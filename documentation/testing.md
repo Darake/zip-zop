@@ -1,10 +1,10 @@
 # Testing
 
-## Huffman
+## Performance testing
 
-### The Canterbury Corpus 
+### Huffman
 
-The first set of tests were done with the Canterbury Corpus collection, which is a popular collection of files for benchmarking compression methods. The test is implemented with JUnit and can be run anytime with the command ``` gradle performanceTests ``` . Each file was compressed and decompressed ten times.  Of those, the average was calculated. The results are following:
+The tests were done with the Canterbury Corpus collection, which is a popular collection of files for benchmarking compression methods. The test is implemented with JUnit and can be run anytime with the command ``` gradle performanceTests ``` . Each file was compressed and decompressed ten times.  Of those, the average was calculated. The results are following:
 
 | File         | Size     | Compressed Size | % of original size | Compression time | Decompression time |
 | ------------ | -------- | --------------- | ------------------ | ---------------- | ------------------ |
@@ -21,6 +21,22 @@ The first set of tests were done with the Canterbury Corpus collection, which is
 | xargs.1      | 4227b    | 2832b           | 67,00%             | 9ms              | 11ms               |
 
 From these different size and type of files the average compressed file size is around 63,36% of the original file.
+
+
+
+By inserting the compression times and file sizes into a graph a comparison can be made.
+
+<img src="https://raw.githubusercontent.com/Darake/zip-zop/master/documentation/images/t-1.png">Other than an odd exception, the compression time appears to be growing linearly with the file size.
+
+
+
+## Unit & Integration testing
+
+All but the the classes in the ui package have tests written for them. Coverage for those included in testing can be seen here:
+
+<img src="https://raw.githubusercontent.com/Darake/zip-zop/master/documentation/images/t-2.png">
+
+The framework used for testing was JUnit 5.
 
 
 
