@@ -27,4 +27,5 @@ Zip-Zop is a compression software using lossless compression algorithms. The pro
 * [Week 3](<https://github.com/Darake/zip-zop/blob/master/documentation/week3.md>)  
 * [Week 4](<https://github.com/Darake/zip-zop/blob/master/documentation/week4.md>) 
 * [Week 5](https://github.com/Darake/zip-zop/blob/master/documentation/week5.md) 
+* [Week 6](https://github.com/Darake/zip-zop/blob/master/documentation/week6.md)
 
