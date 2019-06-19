@@ -58,3 +58,14 @@
 | 2019-06-13 | 1,5   | documentation                      |
 | 2019-06-13 | 1     | generating a jar with dependencies |
 
+## Final Week
+
+| Date       | Hours | Worked on                                                    |
+| ---------- | ----- | ------------------------------------------------------------ |
+| 2019-06-17 | 2     | researching about deflate                                    |
+| 2019-06-17 | 2,5   | refactoring the topology from byte representation to bit representation |
+| 2019-06-18 | 7     | refactoring                                                  |
+| 2019-06-19 | 4     | refactoring                                                  |
+| 2019-06-19 | 2     | apply Google's checkstyle                                    |
+| 2019-06-19 | 1     | documentation                                                |
+
