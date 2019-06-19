@@ -1,6 +1,6 @@
 # Zip-Zop
 
-Zip-Zop is a compression software using lossless compression algorithms. The project is an algorithms and data structures school project.
+Zip-Zop is a lossless compression software using Huffman's coding. The project is an algorithms and data structures school project.
 
 
 
@@ -12,7 +12,7 @@ Zip-Zop is a compression software using lossless compression algorithms. The pro
 
 [Testing](<https://github.com/Darake/zip-zop/blob/master/documentation/testing.md>)
 
-
+[JavaDoc](https://htmlpreview.github.io/?https://github.com/Darake/zip-zop/blob/master/javadoc/index.html)
 
 
 
