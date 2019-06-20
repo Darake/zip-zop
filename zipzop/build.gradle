@@ -24,15 +24,20 @@ jacoco {
   toolVersion = "0.8.2"
 }
 
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
 jacocoTestReport {
     reports {
         xml.enabled = true
         html.enabled = true
     }
     afterEvaluate {
-        classDirectories = files(classDirectories.files.collect {
+        classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: 'zipzop/ui/**')
-        })
+        }))
     }
 }
 
@@ -46,11 +51,6 @@ test {
       excludeTags 'performance'
   }
   testLogging.showStandardStreams = false
-}
-
-repositories {
-    jcenter()
-    mavenCentral()
 }
 
 dependencies {
@@ -67,7 +67,6 @@ task performanceTests(type: Test) {
     useJUnitPlatform {
         includeTags 'performance'
     }
-    check.dependsOn it
     shouldRunAfter test
     testLogging.showStandardStreams = true
 }
