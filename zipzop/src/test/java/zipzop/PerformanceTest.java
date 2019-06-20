@@ -67,7 +67,8 @@ public class PerformanceTest {
       long decompressionTime = 0;
       long compressedFileSize = 0;
 
-      for (int i = 0; i < 10; i++) {
+      int n = 10;
+      for (int i = 0; i < n; i++) {
         String compressedFilePath = tempDir.resolve("output" + fileName + i).toString();
         
         compressionTime += compress(file, compressedFilePath);
@@ -77,9 +78,9 @@ public class PerformanceTest {
         compressedFileSize += new File(compressedFilePath).length();
       }
 
-      compressionTime /= 10;
-      decompressionTime /= 10;
-      compressedFileSize /= 10;
+      compressionTime /= n;
+      decompressionTime /= n;
+      compressedFileSize /= n;
 
       long fileSize = new File(file).length();
       

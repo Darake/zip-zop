@@ -4,13 +4,15 @@ package zipzop.util;
 public class ByteConversion {
   
   /**
-   * Converts an int into a binary string.
+   * Converts an int into a binary string. The 0xFF makes sure that the byte is unsigned and the
+   * 0x100 makes sure that the byte is padded with 0s. Because the 0x100 adds a 100000000 to the
+   * string, the 1 is removed with 'substring(1)'.
    * 
    * @param b int or byte as int to be converted
    * @return Returns a byte in a binary string format
    */
   public String byteAsString(int b) {
-    return String.format("%8s", Integer.toBinaryString(b)).replace(' ', '0');
+    return Integer.toBinaryString((b & 0xFF) + 0x100).substring(1);
   }
   
   /**

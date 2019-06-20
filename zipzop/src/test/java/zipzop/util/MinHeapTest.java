@@ -44,7 +44,7 @@ public class MinHeapTest {
   @Test
   @DisplayName("objects are in right order")
   public void objectsAreInRightOrder() {
-    Comparable[] expected = new Comparable[256];
+    Comparable[] expected = new Comparable[257];
     expected[1] = firstNode;
     expected[2] = secondNode;
     expected[3] = thirdNode;
@@ -77,7 +77,7 @@ public class MinHeapTest {
   @DisplayName("polling orders the heap correctly")
   public void pollOrdersHeapCorrectly() {
     minHeap.poll();
-    Comparable[] expected = new Comparable[256];
+    Comparable[] expected = new Comparable[257];
     expected[1] = thirdNode;
     expected[2] = secondNode;
     expected[3] = fourthNode;

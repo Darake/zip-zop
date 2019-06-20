@@ -10,7 +10,7 @@ public class MinHeap<T extends Comparable<T>> {
   private int size;
 
   public MinHeap(int maxSize) {
-    this.heap = (T[]) new Comparable[maxSize];
+    this.heap = (T[]) new Comparable[maxSize + 1];
     this.size = 0;
   }
 

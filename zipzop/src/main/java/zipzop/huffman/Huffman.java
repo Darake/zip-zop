@@ -67,56 +67,24 @@ public class Huffman {
     }
     return topology.toString();
   }
-
+  
   /**
-   * Converts a topology in form of a binary string into a byte array.
-   *
-   * @param root The Huffman tree's root node
-   * @param topologySize Topology size in header (amount of bytes taken)
-   * @return A Huffman tree topology as a byte array
+   * Creates a topology from a binary string created from a Huffman tree.
+   * 
+   * @param root Huffman tree's root node
+   * @return Returns the topology as an byte array
    */
-  private byte[] createTopologyArray(TreeNode root, int topologySize) {
+  private byte[] createTopology(TreeNode root) {
     String topologyString = createTopologyBinaryString(new StringBuilder(), root);
-    byte[] topologyArray = new byte[topologySize];
-
-    int i = 0;
-    while (topologyString.length() >= 8) {
+    for (int i = 0; i < topologyString.length() % 8; i++) {
+      topologyString += "0";
+    }
+    byte[] topologyArray = new byte[topologyString.length() / 8];
+    for (int i = 0; i < topologyArray.length; i++) {
       topologyArray[i] = converter.stringAsByte(topologyString.substring(0, 8));
       topologyString = topologyString.substring(8);
-      i++;
     }
-    if (topologyString.length() > 0) {
-      for (int j = topologyString.length(); j < 8; j++) {
-        topologyString += "0";
-      }
-      topologyArray[i] = converter.stringAsByte(topologyString);
-    }
-
     return topologyArray;
-  }
-
-  /**
-   * Counts the characters used in encoding table and calculates the topology (Huffman tree) size
-   * out of it.
-   *
-   * @param encodingTable String[] encoding table made from file to be compressed
-   * @return Topology size as int. (The number of bytes Huffman tree takes space in header)
-   */
-  private int getTopologySize(String[] encodingTable) {
-    int characters = 0;
-    for (String string : encodingTable) {
-      if (string != null) {
-        characters++;
-      }
-    }
-
-    int topologySize = characters + (2 * characters / 8);
-
-    if (!((2 * characters) % 8 == 0)) {
-      topologySize++;
-    }
-
-    return topologySize;
   }
 
   /**
@@ -161,9 +129,7 @@ public class Huffman {
     var encodingTable = new String[256];
     createBitEncodingTable(encodingTable, "", root);
 
-    int topologySize = getTopologySize(encodingTable);
-
-    byte[] topology = createTopologyArray(root, topologySize);
+    byte[] topology = createTopology(root);
 
     var inputStream = new ByteInputStream(filePath);
     var outputStream = new ByteOutputStream(compressedFilePath);
@@ -183,19 +149,22 @@ public class Huffman {
    *
    * @param encodedData StringBuilder object containing the encoded data in bit representation
    * @param node TreeNode of the next node to be traversed in Huffman tree
+   * @param stream ByteInputStream of the file being decompressed
    * @return Returns the first decoded byte got from encoded data
    */
-  private byte decode(StringBuilder encodedData, TreeNode node) {
+  private byte decode(StringBuilder encodedData, TreeNode node, ByteInputStream stream) {
     if (node.getData() != null) {
       return (byte) (char) node.getData();
+    } else if (encodedData.length() == 0) {
+      encodedData.append(converter.byteAsString(stream.nextByte()));
     }
 
     if (encodedData.charAt(0) == '0') {
       encodedData.deleteCharAt(0);
-      return decode(encodedData, node.getLeftChild());
+      return decode(encodedData, node.getLeftChild(), stream);
     } else {
       encodedData.deleteCharAt(0);
-      return decode(encodedData, node.getRightChild());
+      return decode(encodedData, node.getRightChild(), stream);
     }
   }
 
@@ -213,11 +182,9 @@ public class Huffman {
     TreeNode root = tree.buildTreeFromCompressedFile(inputStream);
 
     int outputSize = 0;
-    String firstDataByte = converter.byteAsString(inputStream.nextByte());
-    StringBuilder encodedDataBuffer = new StringBuilder(firstDataByte);
+    StringBuilder encodedDataBuffer = new StringBuilder();
     while (outputSize < uncompressedFileSize) {
-      encodedDataBuffer.append(converter.byteAsString(inputStream.nextByte()));
-      byte nextDecodedByte = decode(encodedDataBuffer, root);
+      byte nextDecodedByte = decode(encodedDataBuffer, root, inputStream);
       outputStream.writeByte(nextDecodedByte);
       outputSize++;
     }

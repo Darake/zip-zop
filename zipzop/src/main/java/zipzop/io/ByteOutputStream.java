@@ -44,6 +44,14 @@ public class ByteOutputStream {
       ex.printStackTrace();
     }
   }
+  
+  /*public void writeBinaryString(String string) {
+    try {
+      stream.write(byteArray);
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+  }*/
 
   /**
    * Closes the FileOutputStream.
