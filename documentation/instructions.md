@@ -10,7 +10,7 @@ After that, download the latest application version from [here](https://github.c
 
 Using the application is simple. Start by, simply double clicking the jar file or entering `java -jar /path/to/file.jar` in the console, where '/path/to/' is the path to the file from your working directory and 'file.jar' is the name of the jar file. A simple user interface should appear.
 
-<img src="https://raw.githubusercontent.com/Darake/zip-zop/master/documentation/images/in-1v3.png">
+<img src="https://raw.githubusercontent.com/Darake/zip-zop/master/documentation/images/in-1.png">
 
 First, lets select a file by clicking 'Select file'. A file chooser should pop up.
 
