@@ -6,6 +6,8 @@ Zip-Zop is a lossless compression software using Huffman's coding. The project i
 
 ## Documentation
 
+[Instructions](https://github.com/Darake/zip-zop/blob/master/documentation/instructions.md)
+
 [Software requirements specification](<https://github.com/Darake/zip-zop/blob/master/documentation/SRS.md>)  
 
 [Implementation](<https://github.com/Darake/zip-zop/blob/master/documentation/implementation.md>)  
@@ -15,6 +17,10 @@ Zip-Zop is a lossless compression software using Huffman's coding. The project i
 [JavaDoc](https://htmlpreview.github.io/?https://github.com/Darake/zip-zop/blob/master/javadoc/index.html)
 
 
+
+## Releases
+
+[v0.1.0](https://github.com/Darake/zip-zop/releases/tag/v0.1.0) 
 
 ## Reporting
 

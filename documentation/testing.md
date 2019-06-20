@@ -6,37 +6,35 @@
 
 The tests were done with the Canterbury Corpus collection, which is a popular collection of files for benchmarking compression methods. The test is implemented with JUnit and can be run anytime with the command ``` gradle performanceTests ``` . Each file was compressed and decompressed ten times.  Of those, the average was calculated. The results are following:
 
-| File         | Size     | Compressed Size | % of original size | Compression time | Decompression time |
-| ------------ | -------- | --------------- | ------------------ | ---------------- | ------------------ |
-| alice29.txt  | 152089b  | 87918b          | 57,81%             | 330ms            | 4791ms             |
-| asyoulik.txt | 125179b  | 76018b          | 60,73%             | 264ms            | 3041ms             |
-| cp.html      | 24603b   | 16465b          | 66,92%             | 54ms             | 129ms              |
-| fields.c     | 11150b   | 7304b           | 65,51%             | 24ms             | 36ms               |
-| grammar.lsp  | 3721b    | 2406b           | 64,66%             | 7ms              | 9ms                |
-| kennedy.xls  | 1029744b | 463308b         | 44,99%             | 2014ms           | 261456ms           |
-| lcet10.txt   | 426754b  | 250825b         | 58,78%             | 953ms            | 41410ms            |
-| plrabn12.txt | 481861b  | 275836b         | 57,24%             | 1073ms           | 52735ms            |
-| ptt5         | 513216b  | 107036b         | 20,86%             | 892ms            | 40002ms            |
-| sum          | 38240b   | 26418b          | 69,08%             | 89ms             | 308ms              |
-| xargs.1      | 4227b    | 2832b           | 67,00%             | 9ms              | 11ms               |
+| File         |       Size | Size after | % of original size | Compression | Decompression |
+| ------------ | ---------: | ---------: | ------------------ | ----------: | ------------: |
+| alice29.txt  |   152 089b |    87 785b | 57,72%             |       328ms |         261ms |
+| asyoulik.txt |   125 179b |    75 895b | 60,63%             |       263ms |         215ms |
+| cp.html      |    24 603b |    16 311b | 66,30%             |        53ms |          43ms |
+| fields.c     |    11 150b |     7 143b | 64,06%             |        23ms |          19ms |
+| grammar.lsp  |     3 721b |     2 269b | 60,98%             |         7ms |           6ms |
+| kennedy.xls  | 1 029 744b |   462 856b | 44,95%             |     1 977ms |       1 641ms |
+| lcet10.txt   |   426 754b |   250 674b | 58,74%             |       888ms |         732ms |
+| plrabn12.txt |   481 861b |   275 691b | 57,21%             |       994ms |         821ms |
+| ptt5         |   513 216b |   106 754b | 20,80%             |       827ms |         715ms |
+| sum          |     38240b |    25 968b | 67,91%             |        84ms |          70ms |
+| xargs.1      |      4227b |     2 699b | 63,86%             |         9ms |           7ms |
 
-From these different size and type of files the average compressed file size is around 63,36% of the original file.
+Judging from these tests, our Huffman implementation's compression can reach an average 56,65% of the original file size or a median of 60,63%.
 
 
 
 By inserting the compression times and file sizes into a graph a comparison can be made.
 
-<img src="https://raw.githubusercontent.com/Darake/zip-zop/master/documentation/images/t-1.png">Other than an odd exception, the compression time appears to be growing linearly with the file size.
+<img src="https://raw.githubusercontent.com/Darake/zip-zop/master/documentation/images/t-1.png">Other than in extreme cases, the compression time appears to be growing linearly with the file size. This affirms the assumptions made [here](https://github.com/Darake/zip-zop/blob/master/documentation/implementation.md#compression).
 
 
 
-## Unit & Integration testing
+## Unit testing
 
-All but the the classes in the ui package have tests written for them. Coverage for those included in testing can be seen here:
+The framework used for testing was JUnit 5. All but the the classes in the ui package have tests written for them. Coverage for those included in testing can be seen here:
 
-<img src="https://raw.githubusercontent.com/Darake/zip-zop/master/documentation/images/t-2.png">
-
-The framework used for testing was JUnit 5.
+<img src="https://raw.githubusercontent.com/Darake/zip-zop/master/documentation/images/t-2v2.png">
 
 
 

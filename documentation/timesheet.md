@@ -1,5 +1,7 @@
 # Timesheet
 
+#### Total time spent on project: ~78h
+
 ## Week 1
 
 | Date       | Hours | Worked on                                                    |
@@ -68,4 +70,7 @@
 | 2019-06-19 | 4     | refactoring                                                  |
 | 2019-06-19 | 2     | apply Google's checkstyle                                    |
 | 2019-06-19 | 1     | documentation                                                |
+| 2019-06-19 | 3     | fixing bugs and improving decompression time                 |
+| 2019-06-20 | 1     | refactoring build.gradle                                     |
+| 2019-06-20 | 2,5   | documentation                                                |
 
